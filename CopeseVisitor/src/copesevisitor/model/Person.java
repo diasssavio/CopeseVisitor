@@ -41,6 +41,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Person.findByPhone2", query = "SELECT p FROM Person p WHERE p.phone2 = :phone2"),
     @NamedQuery(name = "Person.findByPhone3", query = "SELECT p FROM Person p WHERE p.phone3 = :phone3")})
 public class Person implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "person")
+    private Collection<Activityexecution> activityexecutionCollection;
     @Basic(optional = false)
     @Lob
     @Column(name = "email")
@@ -284,6 +286,15 @@ public class Person implements Serializable {
 
     public void setSiape(String siape) {
         this.siape = siape;
+    }
+
+    @XmlTransient
+    public Collection<Activityexecution> getActivityexecutionCollection() {
+        return activityexecutionCollection;
+    }
+
+    public void setActivityexecutionCollection(Collection<Activityexecution> activityexecutionCollection) {
+        this.activityexecutionCollection = activityexecutionCollection;
     }
     
 }

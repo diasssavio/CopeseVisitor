@@ -13,6 +13,7 @@
     <class>Pictures.Place</class>
     <class>copesevisitor.model.Category</class>
     <class>copesevisitor.model.Event</class>
+    <class>copesevisitor.model.Activityexecution</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/copesevisitor?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.password" value="savio"/>

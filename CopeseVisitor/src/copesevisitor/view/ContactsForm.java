@@ -33,7 +33,7 @@ public class ContactsForm extends javax.swing.JFrame
      */
     private void updateTableContact() throws SQLException, ParseException
     {
-        List<Person> result = personDAO.getByPieceOfName( jName.getText() );
+        List<Person> result = personDAO.getPeopleByPieceOfName( jName.getText() );
         String[][] tableValue = new String[result.size()][5];
         
         for( Integer i = 0; i < result.size(); i++ )

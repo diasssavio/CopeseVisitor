@@ -228,13 +228,50 @@ public class PersonDAO {
     }
     
     /**
+     * Retorna a primeira pessoa por um pedaço de nome para busca
+     * @param piece pedaço de nome
+     * @return primeira pessoa que contém piece no nome
+     * @throws SQLException 
+     */
+    public Person getPersonByPieceOfName( String piece ) throws SQLException
+    {
+        PreparedStatement statement = connection.prepareStatement( "SELECT * FROM person WHERE name LIKE '" + piece + "%'" );
+        
+        ResultSet result = statement.executeQuery();
+        Person person = null;
+        if( result.next() )
+        {
+            person = new Person( (Integer) result.getObject( "id" ) );
+            person.setCpf( (String) result.getObject( "cpf" ) );
+            person.setName( (String) result.getObject( "name" ) );
+            person.setBirthdate( (Date) result.getObject( "birthdate" ) );
+            person.setRg( (String) result.getObject( "rg" ) );
+            person.setWichorgan( (String) result.getObject( "wichorgan" ) );
+            person.setEmail( (String) result.getObject( "email" ) );
+            person.setGender( (String) result.getObject( "gender" ) );
+            person.setPispasep( (String) result.getObject( "pispasep" ) );
+            person.setSiape( (String) result.getObject( "siape" ) );
+            person.setPhone1( (String) result.getObject( "phone1" ) );
+            person.setPhone2( (String) result.getObject( "phone2" ) );
+            person.setPhone3( (String) result.getObject( "phone3" ) );
+            person.setUftlink( (String) result.getObject( "uftlink" ) );
+            person.setPlace( new PlaceDAO( connection ).selectPK( (Integer) result.getObject( "place_id" ) ) );
+            person.setBankaccount( new BankaccountDAO( connection ).selectPK( (Integer) result.getObject( "bankaccount_id" ) ) );
+            person.setAddress( new AddressDAO( connection ).selectPK( (Integer) result.getObject( "address_id" ) ) );
+        }
+        statement.close();
+        
+        return person;
+    }
+    
+    /**
      * Lista as pessoas por um pedaço de nome para busca
      * @param piece pedaço de nome
      * @return Lista de pessoas que contém piece no nome
      * @throws SQLException
      * @throws ParseException 
      */
-    public List<Person> getByPieceOfName( String piece ) throws SQLException, ParseException
+    public List<Person> getPeopleByPieceOfName( String piece ) throws SQLException, ParseException
     {
         List<Person> people = new ArrayList<Person>();
         

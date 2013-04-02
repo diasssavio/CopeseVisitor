@@ -79,127 +79,13 @@ public class CopeseVisitor extends javax.swing.JFrame
     }
     
     /**
-     * Converte a escala métrica em pontos (utilizados na iText API)
-     * @param metters valor em escala métrica
-     * @return pontos que representam o valor passado na escala métrica
-     */
-    private float mettersToPoints( float metters )
-    {
-        return ( metters * 72.0f ) / 2.54f;
-    }
-    
-    /**
-     * 
-     * @return 
-     */
-    private Document generateDeclaration( Person person ) throws SQLException, DocumentException, FileNotFoundException, IOException
-    {
-        Document declaration = new Document( PageSize.A4, mettersToPoints(3f), mettersToPoints(3f), mettersToPoints(2.5f), mettersToPoints(2.5f) );
-        Font font = new Font(Font.FontFamily.TIMES_ROMAN, 12);
-        
-        OutputStream out = new FileOutputStream( "declaration.pdf" );
-        PdfWriter.getInstance( declaration, out );
-        declaration.open();
-        
-        // Document header
-        Paragraph paragraph = new Paragraph( "ANEXO II", font );
-        paragraph.setAlignment( Element.ALIGN_CENTER );
-        declaration.add( paragraph );
-        
-        paragraph = new Paragraph( "DECLARAÇÃO DE EXECUÇÃO DE ATIVIDADES", font );
-        paragraph.setAlignment( Element.ALIGN_CENTER );
-        declaration.add( paragraph );
-        
-        // Adding table
-        PdfPTable table = new PdfPTable( new float[] { 0.6f, 0.2f, 0.4f } );
-        
-        // Table header
-        String headerText = "Pela presente DECLARAÇÃO DE EXECUÇÃO DE ATIVIDADES, eu " + person.getName() 
-                + "matrícula SIAPE nº " + person.getSiape() + "ocupante do cargo de " + person.getUftlink()
-                + ", em exercício na (o)" + ", declaro ter participado, no ano em curso, das seguintes atividades"
-                + " relacionadas a curso, concurso público ou exame vestibular, previstas no art. 76-A da Lei"
-                + " nº 8.112, de 1990, e no Decreto nº 6114 de 15 de maio, de 2007:";
-        
-        paragraph = new Paragraph( headerText, font );
-        paragraph.setAlignment( Element.ALIGN_JUSTIFIED );
-        PdfPCell header = new PdfPCell( paragraph );
-        header.setColspan( 3 );
-        table.addCell( header );
-        
-        // Table activities
-        table.addCell( "Atividades" );
-        table.addCell( "Instituição" );
-        table.addCell( "Horas Trabalhadas" );
-        
-        Double hours = 0.0;
-        for( Activity activity : activityDAO.listAllClosedActivitiesFromPerson( person ) )
-        {
-            paragraph = new Paragraph( activity.getDescription() + "em " + activity.getEvent().toString(), font );
-            paragraph.setAlignment( Element.ALIGN_CENTER );
-            table.addCell( paragraph );
-            
-            paragraph = new Paragraph( "UFT", font );
-            paragraph.setAlignment( Element.ALIGN_CENTER );
-            table.addCell( paragraph );
-            
-            // Calculating the hours
-            Double temp = ( activity.getDeparturetime().getTime() - activity.getEntrancetime().getTime() ) / 3600000.0;
-            paragraph = new Paragraph( String.format( "%1f", temp ), font );
-            paragraph.setAlignment( Element.ALIGN_CENTER );
-            table.addCell( paragraph );
-            
-            hours += temp;
-        }
-        
-        // Total activities
-        paragraph = new Paragraph( "TOTAL DE HORAS TRABALHADAS NO ANO EM CURSO", font );
-        paragraph.setAlignment( Element.ALIGN_LEFT );
-        PdfPCell total = new PdfPCell( paragraph );
-        total.setColspan( 2 );
-        table.addCell( total );
-        
-        paragraph = new Paragraph( hours.toString() );
-        paragraph.setAlignment( Element.ALIGN_CENTER );
-        table.addCell( paragraph );
-        
-        // Document end ---- TODO
-        String endText = "Declaro, sob minha inteira responsabilidade, serem exatas e verdadeiras as "
-                + "informações aqui prestadas, sob pena de responsabilidades administrativa, civil e penal.";
-        paragraph = new Paragraph( endText, font );
-        paragraph.setAlignment( Element.ALIGN_JUSTIFIED );
-        PdfPCell end = new PdfPCell( paragraph );
-        
-        Calendar calendar = Calendar.getInstance();
-        paragraph.add( "Palmas, " + calendar.get( Calendar.DAY_OF_MONTH ) + " de " + calendar.get( Calendar.MONTH ) + " de " + calendar.get( Calendar.YEAR ) + "." );
-        paragraph.add("______________________________________");
-        paragraph.add(total);
-        end.setColspan( 3 );
-        table.addCell( end );
-        
-        out.close();
-        
-        return declaration;
-    }
-    
-    /**
-     * 
-     * @return 
-     */
-    private Document generateTermCommitment()
-    {
-        Document term = new Document( PageSize.A4 );
-        
-        return term;
-    }
-    
-    /**
      * Pesquisa e atualiza tabela de entrada de pessoal
      * @throws SQLException
      * @throws ParseException 
      */
     private void updateTablePeople() throws SQLException, ParseException
     {
-        List<Person> result = personDAO.getByPieceOfName( jName.getText() );
+        List<Person> result = personDAO.getPeopleByPieceOfName( jName.getText() );
         String[][] tableValue = new String[result.size()][7];
         
         for( Integer i = 0; i < result.size(); i++ )
@@ -375,7 +261,7 @@ public class CopeseVisitor extends javax.swing.JFrame
         jMenuEvent = new javax.swing.JMenuItem();
         jMenuReports = new javax.swing.JMenu();
         jMenuContacts = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuDeclaration = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
         jMenuAbout = new javax.swing.JMenuItem();
@@ -712,8 +598,13 @@ public class CopeseVisitor extends javax.swing.JFrame
         });
         jMenuReports.add(jMenuContacts);
 
-        jMenuItem1.setText("Declaração de Execução de Atividades");
-        jMenuReports.add(jMenuItem1);
+        jMenuDeclaration.setText("Declaração de Execução de Atividades");
+        jMenuDeclaration.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuDeclarationActionPerformed(evt);
+            }
+        });
+        jMenuReports.add(jMenuDeclaration);
 
         jMenuItem2.setText("Termo de Compromisso - Banca");
         jMenuReports.add(jMenuItem2);
@@ -923,6 +814,11 @@ public class CopeseVisitor extends javax.swing.JFrame
         new ContactsForm().setVisible( true );
     }//GEN-LAST:event_jMenuContactsActionPerformed
 
+    private void jMenuDeclarationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuDeclarationActionPerformed
+        try{ new DeclarationForm().setVisible( true ); }
+        catch( SQLException e ) { JOptionPane.showMessageDialog( null, e.getMessage() ); }
+    }//GEN-LAST:event_jMenuDeclarationActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -976,11 +872,11 @@ public class CopeseVisitor extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuAbout;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuContacts;
+    private javax.swing.JMenuItem jMenuDeclaration;
     private javax.swing.JMenuItem jMenuEvent;
     private javax.swing.JMenuItem jMenuExit;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenu jMenuHelp;
-    private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuPerson;
     private javax.swing.JMenuItem jMenuPlace;
