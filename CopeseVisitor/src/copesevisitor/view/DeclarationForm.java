@@ -42,12 +42,15 @@ public class DeclarationForm extends JFrame
     
     private DefaultTableModel model;
     
+    private String[] monthMap;
+    
     /**
      * Creates new form DeclarationForm
      */
     public DeclarationForm() throws SQLException
     {
         initComponents();
+        monthMap = new String[] { "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" };
         this.setLocationRelativeTo( null );
         
         executionDAO = new ActivityexecutionDAO( DBManager.getInstance().getConnection() );
@@ -84,6 +87,7 @@ public class DeclarationForm extends JFrame
         
         paragraph = new Paragraph( "DECLARAÇÃO DE EXECUÇÃO DE ATIVIDADES", font );
         paragraph.setAlignment( Element.ALIGN_CENTER );
+        paragraph.setSpacingAfter( mettersToPoints( 2 ) );
         declaration.add( paragraph );
         
         // Creating table
@@ -91,13 +95,13 @@ public class DeclarationForm extends JFrame
         
         // Table header
         String headerText = "Pela presente DECLARAÇÃO DE EXECUÇÃO DE ATIVIDADES, eu " + person.getName() 
-                + "matrícula SIAPE nº " + person.getSiape() + "ocupante do cargo de " + person.getUftlink()
+                + " matrícula SIAPE nº " + person.getSiape() + ", ocupante do cargo de " + person.getUftlink()
                 + ", em exercício na (o)" + ", declaro ter participado, no ano em curso, das seguintes atividades"
                 + " relacionadas a curso, concurso público ou exame vestibular, previstas no art. 76-A da Lei"
                 + " nº 8.112, de 1990, e no Decreto nº 6114 de 15 de maio, de 2007:";
         
         paragraph = new Paragraph( headerText, font );
-        paragraph.setAlignment( Element.ALIGN_JUSTIFIED );
+        paragraph.setAlignment( Element.ALIGN_JUSTIFIED_ALL );
         PdfPCell header = new PdfPCell( paragraph );
         header.setColspan( 3 );
         table.addCell( header );
@@ -143,17 +147,19 @@ public class DeclarationForm extends JFrame
         paragraph = new Paragraph( endText, font );
         
         Calendar calendar = Calendar.getInstance();
-        paragraph.add( "\nPalmas, " + calendar.get( Calendar.DAY_OF_MONTH ) + " de " + calendar.get( Calendar.MONTH ) + " de " + calendar.get( Calendar.YEAR ) + "." );
+        paragraph.add( "\n\nPalmas, " + calendar.get( Calendar.DAY_OF_MONTH ) + " de " + monthMap[ calendar.get( Calendar.MONTH ) ] + " de " + calendar.get( Calendar.YEAR ) + "." );
         
-        paragraph.add("\n______________________________________");
+        paragraph.add("\n\n______________________________________");
         paragraph.add("\nAssinatura do Servidor");
         
-        paragraph.setAlignment( Element.ALIGN_JUSTIFIED );
+        paragraph.setAlignment( Element.ALIGN_CENTER );
         PdfPCell end = new PdfPCell( paragraph );
         end.setColspan( 3 );
         table.addCell( end );
         
         table.setHorizontalAlignment( Element.ALIGN_CENTER );
+        
+        declaration.add( table );
         
         declaration.close();
         
