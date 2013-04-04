@@ -31,11 +31,11 @@
                   <Group type="102" attributes="0">
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="jTextField1" min="-2" pref="302" max="-2" attributes="0"/>
+                      <Component id="jPerson" min="-2" pref="302" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="jButtonNew" min="-2" pref="30" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="jButtonAdd" min="-2" pref="30" max="-2" attributes="0"/>
+                      <Component id="jButtonSave" min="-2" pref="30" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jButtonPrint" min="-2" pref="30" max="-2" attributes="0"/>
                       <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
@@ -51,9 +51,9 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                   <Component id="jButtonNew" max="32767" attributes="0"/>
-                  <Component id="jButtonAdd" max="32767" attributes="0"/>
+                  <Component id="jButtonSave" max="32767" attributes="0"/>
                   <Component id="jButtonPrint" max="32767" attributes="0"/>
-                  <Component id="jTextField1" alignment="0" max="32767" attributes="0"/>
+                  <Component id="jPerson" alignment="0" max="32767" attributes="0"/>
                   <Component id="jLabel1" alignment="0" max="32767" attributes="0"/>
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -72,9 +72,9 @@
         <Property name="text" type="java.lang.String" value="Pessoa:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JTextField" name="jTextField1">
+    <Component class="javax.swing.JTextField" name="jPerson">
       <Events>
-        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jTextField1KeyReleased"/>
+        <EventHandler event="keyReleased" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jPersonKeyReleased"/>
       </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="jScrollPane1">
@@ -87,11 +87,12 @@
         <Component class="javax.swing.JTable" name="jTable1">
           <Properties>
             <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-              <Table columnCount="4" rowCount="0">
+              <Table columnCount="5" rowCount="0">
                 <Column editable="true" title="Atividade" type="java.lang.String"/>
                 <Column editable="true" title="Institui&#xe7;&#xe3;o" type="java.lang.String"/>
-                <Column editable="true" title="Horas Trabalhadas" type="java.lang.Float"/>
-                <Column editable="true" title="Ano" type="java.lang.Integer"/>
+                <Column editable="true" title="Horas Trabalhadas" type="java.lang.String"/>
+                <Column editable="true" title="Ano" type="java.lang.String"/>
+                <Column editable="false" title="Pessoa" type="java.lang.String"/>
               </Table>
             </Property>
           </Properties>
@@ -111,7 +112,7 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonNewActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="jButtonAdd">
+    <Component class="javax.swing.JButton" name="jButtonSave">
       <Properties>
         <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
           <Image iconType="3" name="/copesevisitor/view/images/save.png"/>
@@ -121,7 +122,7 @@
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAddActionPerformed"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonSaveActionPerformed"/>
       </Events>
     </Component>
     <Component class="javax.swing.JButton" name="jButtonPrint">

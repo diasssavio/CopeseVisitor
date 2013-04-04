@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import java.util.List;
+import java.util.Date;
 import java.util.ArrayList;
 
 /**
@@ -37,7 +38,7 @@ public class ActivityexecutionDAO
         statement.setObject( 3, execution.getInstitution() );
         statement.setObject( 4, execution.getHoursworked() );
         statement.setObject( 5, execution.getYear() );
-        statement.setObject( 6, execution.getPerson() );
+        statement.setObject( 6, execution.getPerson().getId() );
         
         statement.executeUpdate();
         statement.close();
@@ -50,9 +51,9 @@ public class ActivityexecutionDAO
         statement.setObject( 1, execution.getId() );
         statement.setObject( 2, execution.getDescription() );
         statement.setObject( 3, execution.getInstitution() );
-        statement.setObject( 4, execution.getHoursworked() );
+        statement.setObject( 4, execution.getHoursworked());
         statement.setObject( 5, execution.getYear() );
-        statement.setObject( 6, execution.getPerson() );
+        statement.setObject( 6, execution.getPerson().getId() );
         statement.setObject( 7, execution.getId() );
         
         statement.executeUpdate();
@@ -83,7 +84,7 @@ public class ActivityexecutionDAO
             execution.setDescription( (String) result.getObject( "description" ) );
             execution.setInstitution( (String) result.getObject( "institution" ) );
             execution.setHoursworked( (Float) result.getObject( "hoursworked" ) );
-            execution.setYear( (String) result.getObject( "year" ) );
+            execution.setYear( (Integer) result.getObject( "year" ) );
             execution.setPerson( new PersonDAO( connection ).selectPK( (Integer) result.getObject( "person_id" ) ) );
         }
         statement.close();
@@ -106,7 +107,7 @@ public class ActivityexecutionDAO
             toAdd.setDescription( (String) result.getObject( "description" ) );
             toAdd.setInstitution( (String) result.getObject( "institution" ) );
             toAdd.setHoursworked( (Float) result.getObject( "hoursworked" ) );
-            toAdd.setYear( (String) result.getObject( "year" ) );
+            toAdd.setYear( (Integer) result.getObject( "year" ) );
             toAdd.setPerson( new PersonDAO( connection ).selectPK( (Integer) result.getObject( "person_id" ) ) );
             executions.add( toAdd );
         }

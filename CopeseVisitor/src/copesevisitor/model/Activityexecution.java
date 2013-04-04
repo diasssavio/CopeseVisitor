@@ -52,7 +52,7 @@ public class Activityexecution implements Serializable {
     @Basic(optional = false)
     @Column(name = "year")
     @Temporal(TemporalType.DATE)
-    private String year;
+    private Integer year;
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Person person;
@@ -64,7 +64,7 @@ public class Activityexecution implements Serializable {
         this.id = id;
     }
 
-    public Activityexecution(Integer id, String description, String institution, float hoursworked, String year) {
+    public Activityexecution(Integer id, String description, String institution, float hoursworked, Integer year) {
         this.id = id;
         this.description = description;
         this.institution = institution;
@@ -104,11 +104,11 @@ public class Activityexecution implements Serializable {
         this.hoursworked = hoursworked;
     }
 
-    public String getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(String year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 

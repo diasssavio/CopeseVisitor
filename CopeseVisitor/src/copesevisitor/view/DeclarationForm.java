@@ -52,7 +52,7 @@ public class DeclarationForm extends JFrame
         
         executionDAO = new ActivityexecutionDAO( DBManager.getInstance().getConnection() );
         person = new PersonDAO( DBManager.getInstance().getConnection() ).first();
-        updateTable();
+        updateTableActivity();
     }
 
     /**
@@ -66,16 +66,15 @@ public class DeclarationForm extends JFrame
     }
     
     /**
-     * 
-     * @return 
+     * Gera a declaração de execução de atividades de determinada pessoa
+     * @return declaração 
      */
     private Document generateDeclaration() throws SQLException, DocumentException, FileNotFoundException, IOException
     {
         Document declaration = new Document( PageSize.A4, mettersToPoints(3f), mettersToPoints(3f), mettersToPoints(2.5f), mettersToPoints(2.5f) );
         Font font = new Font(Font.FontFamily.TIMES_ROMAN, 12);
         
-        OutputStream out = new FileOutputStream( "declaration.pdf" );
-        PdfWriter.getInstance( declaration, out );
+        PdfWriter.getInstance( declaration, new FileOutputStream( "declaration.pdf" ) );
         declaration.open();
         
         // Document header
@@ -87,8 +86,8 @@ public class DeclarationForm extends JFrame
         paragraph.setAlignment( Element.ALIGN_CENTER );
         declaration.add( paragraph );
         
-        // Adding table
-        PdfPTable table = new PdfPTable( new float[] { 0.6f, 0.2f, 0.4f } );
+        // Creating table
+        PdfPTable table = new PdfPTable( new float[] { 0.5f, 0.2f, 0.3f } );
         
         // Table header
         String headerText = "Pela presente DECLARAÇÃO DE EXECUÇÃO DE ATIVIDADES, eu " + person.getName() 
@@ -154,7 +153,8 @@ public class DeclarationForm extends JFrame
         end.setColspan( 3 );
         table.addCell( end );
         
-        out.close();
+        table.setHorizontalAlignment( Element.ALIGN_CENTER );
+        
         declaration.close();
         
         return declaration;
@@ -174,10 +174,10 @@ public class DeclarationForm extends JFrame
     /**
      * Pesquisa e atualiza tabela de atividades executadas
      */
-    private void updateTable() throws SQLException
+    private void updateTableActivity() throws SQLException
     {
         executions = executionDAO.listExecutionByPerson( person );
-        Object[][] tableValue = new Object[executions.size()][4];
+        Object[][] tableValue = new Object[executions.size()][5];
         
         for( Integer i = 0; i < executions.size(); i++ )
         {
@@ -185,11 +185,15 @@ public class DeclarationForm extends JFrame
             tableValue[i][1] = executions.get( i ).getInstitution();
             tableValue[i][2] = executions.get( i ).getHoursworked();
             tableValue[i][3] = executions.get( i ).getYear();
+            tableValue[i][4] = executions.get( i ).getPerson().getName();
         }
         
-        model = new DefaultTableModel( tableValue, new String [] { "Atividade", "Instituição", "Horas Trabalhadas", "Ano" } ) {
-            Class[] types = new Class [] { java.lang.String.class, java.lang.String.class, java.lang.Float.class, java.lang.Integer.class };
+        model = new DefaultTableModel( tableValue, new String [] { "Atividade", "Instituição", "Horas Trabalhadas", "Ano", "Pessoa" } ) {
+            Class[] types = new Class [] { java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class };
+            boolean[] canEdit = new boolean [] { true, true, true, true, false };
+            
             public Class getColumnClass(int columnIndex) { return types [columnIndex]; }
+            public boolean isCellEditable(int rowIndex, int columnIndex) { return canEdit [columnIndex]; }
         };
         
         jTable1.setModel( model );
@@ -206,11 +210,11 @@ public class DeclarationForm extends JFrame
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        jPerson = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButtonNew = new javax.swing.JButton();
-        jButtonAdd = new javax.swing.JButton();
+        jButtonSave = new javax.swing.JButton();
         jButtonPrint = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -219,9 +223,9 @@ public class DeclarationForm extends JFrame
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
         jLabel1.setText("Pessoa:");
 
-        jTextField1.addKeyListener(new java.awt.event.KeyAdapter() {
+        jPerson.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextField1KeyReleased(evt);
+                jPersonKeyReleased(evt);
             }
         });
 
@@ -230,15 +234,22 @@ public class DeclarationForm extends JFrame
 
             },
             new String [] {
-                "Atividade", "Instituição", "Horas Trabalhadas", "Ano"
+                "Atividade", "Instituição", "Horas Trabalhadas", "Ano", "Pessoa"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Float.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                true, true, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
             }
         });
         jScrollPane1.setViewportView(jTable1);
@@ -251,11 +262,11 @@ public class DeclarationForm extends JFrame
             }
         });
 
-        jButtonAdd.setIcon(new javax.swing.ImageIcon(getClass().getResource("/copesevisitor/view/images/save.png"))); // NOI18N
-        jButtonAdd.setPreferredSize(new java.awt.Dimension(50, 25));
-        jButtonAdd.addActionListener(new java.awt.event.ActionListener() {
+        jButtonSave.setIcon(new javax.swing.ImageIcon(getClass().getResource("/copesevisitor/view/images/save.png"))); // NOI18N
+        jButtonSave.setPreferredSize(new java.awt.Dimension(50, 25));
+        jButtonSave.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonAddActionPerformed(evt);
+                jButtonSaveActionPerformed(evt);
             }
         });
 
@@ -278,11 +289,11 @@ public class DeclarationForm extends JFrame
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPerson, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButtonNew, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jButtonAdd, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButtonSave, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jButtonPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE)))
@@ -294,9 +305,9 @@ public class DeclarationForm extends JFrame
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jButtonNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButtonAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonPrint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTextField1)
+                    .addComponent(jPerson)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
@@ -312,20 +323,33 @@ public class DeclarationForm extends JFrame
      */
     private void jButtonNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNewActionPerformed
         new ActivityExecutionForm( person ).setVisible( true );
-        try{ updateTable(); }
-        catch( SQLException e ) { JOptionPane.showMessageDialog( null, e.getMessage() ); }
+        try{ updateTableActivity(); }
+        catch( SQLException e ) { e.printStackTrace(); }
     }//GEN-LAST:event_jButtonNewActionPerformed
 
     /**
      * Action Performed de Salvar
      * @param evt 
      */
-    private void jButtonAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAddActionPerformed
-        
-    }//GEN-LAST:event_jButtonAddActionPerformed
+    private void jButtonSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSaveActionPerformed
+        try
+        {
+            for( Integer i = 0; i < model.getRowCount(); i++ )
+            {
+                executions.get( i ).setDescription( (String) model.getValueAt( i , 0 ) );
+                executions.get( i ).setInstitution( (String) model.getValueAt( i , 1 ) );
+                executions.get( i ).setHoursworked( Float.parseFloat( model.getValueAt(i , 2 ).toString() ) );
+                executions.get( i ).setYear( Integer.parseInt( model.getValueAt( i , 3 ).toString() ) );
+                
+                executionDAO.update( executions.get( i ) );
+            }
+            JOptionPane.showMessageDialog( null, "Salvo com sucesso!");
+        }
+        catch( SQLException e ) { e.printStackTrace(); }
+    }//GEN-LAST:event_jButtonSaveActionPerformed
 
     /**
-     * 
+     * Action Performed de Imprimir
      * @param evt 
      */
     private void jButtonPrintActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPrintActionPerformed
@@ -340,24 +364,23 @@ public class DeclarationForm extends JFrame
      * 
      * @param evt 
      */
-    private void jTextField1KeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextField1KeyReleased
+    private void jPersonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPersonKeyReleased
         try
         {
-            person = new PersonDAO( DBManager.getInstance().getConnection() ).getPersonByPieceOfName( jTextField1.getText() );
-            //executions = executionDAO.listExecutionByPerson( person );
-            updateTable();
+            person = new PersonDAO( DBManager.getInstance().getConnection() ).getPersonByPieceOfName( jPerson.getText() );
+            if( person != null )
+                updateTableActivity();
         }
         catch( SQLException e ) { JOptionPane.showMessageDialog( null, e.getMessage() ); }
-        catch( NullPointerException e ) { JOptionPane.showMessageDialog( null, e.getMessage() ); }
-    }//GEN-LAST:event_jTextField1KeyReleased
+    }//GEN-LAST:event_jPersonKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButtonAdd;
     private javax.swing.JButton jButtonNew;
     private javax.swing.JButton jButtonPrint;
+    private javax.swing.JButton jButtonSave;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JTextField jPerson;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

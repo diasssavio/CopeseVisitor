@@ -474,6 +474,8 @@ public class CopeseVisitor extends javax.swing.JFrame
 
         jTabbedPane1.addTab("Em execução", jPanel1);
 
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+
         jTable4.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 

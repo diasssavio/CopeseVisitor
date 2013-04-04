@@ -117,7 +117,7 @@ public class ActivityExecutionForm extends JFrame
         execution.setDescription( jActivity.getText() );
         execution.setInstitution( jInstitution.getText() );
         execution.setHoursworked( Float.parseFloat( jHoursWorked.getText() ) );
-        execution.setYear( String.format( "%d", Calendar.getInstance().get( Calendar.YEAR ) ) );
+        execution.setYear( Calendar.getInstance().get( Calendar.YEAR ) );
         execution.setPerson( person );
         
         try{ executionDAO.insert( execution ); }
