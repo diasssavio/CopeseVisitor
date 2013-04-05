@@ -77,7 +77,7 @@ public class DeclarationForm extends JFrame
         Document declaration = new Document( PageSize.A4, mettersToPoints(3f), mettersToPoints(3f), mettersToPoints(2.5f), mettersToPoints(2.5f) );
         Font font = new Font(Font.FontFamily.TIMES_ROMAN, 12);
         
-        PdfWriter.getInstance( declaration, new FileOutputStream( "declaration.pdf" ) );
+        PdfWriter.getInstance( declaration, new FileOutputStream( "Declaração de Execução de Atividades.pdf" ) );
         declaration.open();
         
         // Document header
@@ -164,17 +164,6 @@ public class DeclarationForm extends JFrame
         declaration.close();
         
         return declaration;
-    }
-    
-    /**
-     * 
-     * @return 
-     */
-    private Document generateTermCommitment()
-    {
-        Document term = new Document( PageSize.A4 );
-        
-        return term;
     }
     
     /**

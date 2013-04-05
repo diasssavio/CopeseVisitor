@@ -18,24 +18,29 @@ import javax.swing.table.DefaultTableModel;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Date;
+
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
 import java.text.ParseException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
+import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfPCell;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
+import com.itextpdf.text.Image;
+import java.net.MalformedURLException;
 
 /*
  * CopeseVisitor.java
@@ -76,6 +81,174 @@ public class CopeseVisitor extends javax.swing.JFrame
         updateTablePeople();
         updateTableActivity();
         updateTableActivities();
+    }
+    
+    /**
+     * Converte a escala métrica em pontos (utilizados na iText API)
+     * @param metters valor em escala métrica
+     * @return pontos que representam o valor passado na escala métrica
+     */
+    private float mettersToPoints( float metters )
+    {
+        return ( metters * 72.0f ) / 2.54f;
+    }
+    
+    /**
+     * Gera o termo de compromisso de determinada pessoa para determinado evento
+     * @param person pessoa a gerar termo de compromisso
+     * @return termo de compromisso
+     */
+    private Document generateTermCommitement( Person person, Event event ) throws SQLException, BadElementException, MalformedURLException, IOException, DocumentException
+    {
+        Document term = new Document( PageSize.A4, mettersToPoints(2f), mettersToPoints(2f), mettersToPoints(2f), mettersToPoints(2f) );
+        PdfWriter.getInstance( term, new FileOutputStream( "Termo de Compromisso - Banca.pdf" ) );
+        
+        Font font = new Font( Font.FontFamily.TIMES_ROMAN, 11 );
+
+        term.open();
+        
+        Image image = Image.getInstance( "C:\\Users\\Sávio Dias\\Documents\\GitHub\\CopeseVisitor\\CopeseVisitor\\src\\copesevisitor\\view\\images\\brasao.png" );
+        image.setAlignment( Element.ALIGN_CENTER );
+        term.add( image );
+        
+        Paragraph paragraph = new Paragraph( "SERVIÇO PÚBLICO FEDERAL", font );
+        paragraph.setAlignment( Element.ALIGN_CENTER );
+        term.add( paragraph );
+        
+        font.setStyle( Font.BOLD );
+        
+        paragraph = new Paragraph( "UNIVERSIDADE FEDERAL DO TOCANTINS", font );
+        paragraph.setAlignment( Element.ALIGN_CENTER );
+        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        term.add( paragraph );
+        
+        paragraph = new Paragraph( "Termo de Compromisso", font );
+        paragraph.setAlignment( Element.ALIGN_CENTER );
+        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        term.add( paragraph );
+        
+        font.setStyle( Font.NORMAL );
+        
+        String text = "Objeto: Participante como técnico responsável pela elaboração de questões "
+                + "e resposta aos possíveis recursos no processo seletivo para o Processo Seletivo "
+                + "para seleção de vagas no " + event.getName() + ".";
+        paragraph = new Paragraph( text, font );
+        paragraph.setAlignment( Element.ALIGN_JUSTIFIED_ALL );
+        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        term.add( paragraph );
+        
+        text = "Eu, " + person.getName() + ", portador da Carteira de Identidade nº " + person.getRg()
+                + " " + person.getWichorgan() + " e CPF " + person.getCpf();
+        paragraph = new Paragraph( text, font );
+        paragraph.setAlignment( Element.ALIGN_JUSTIFIED_ALL );
+        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        term.add( paragraph );
+        
+        font.setStyle( Font.BOLD );
+        
+        paragraph = new Paragraph( "DECLARO", font );
+        paragraph.setAlignment( Element.ALIGN_CENTER );
+        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        term.add( paragraph );
+        
+        font.setStyle( Font.NORMAL );
+        
+        text = "1) Estar ciente da minha responsabilidade na participação da confecção de prova, na data e "
+                + "local previstos pela Copese.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "2) Estar ciente de que as atividades devem ser desenvolvidas em horário previamente acertado "
+                + "e cronometrado em horário comercial.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "3) Estar ciente do sigilo indispensável à imparcialidade do concurso, conforme legislação "
+                + "vigente, e instruções repassadas pela Copese.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "4) Estar ciente de que não de divulgar/comentar (para preservar o sigilo do certame) com "
+                + "que sou membro da banca do referido concurso.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "5) Estar ciente de que as questões da prova devem ser inéditas, testadas e atestadas pela "
+                + "banca sobre a pertinência aos conteúdos publicados no edital e, que as mesmas não ofereçam "
+                + "fragilidade que comprometam a seleção no seu todo ou em parte.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "6) Estar ciente das normas para a utilização dos microcomputadores colocado á disposição das "
+                + "bancas.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "7) Estar ciente de que as bibliografias necessárias devem ser providenciadas pelos membros da banca. ";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "8) Estar ciente da minha responsabilidade da entrega de um CD com a gravação da prova, juntamente com uma "
+                + "cópia impressa da mesma, rubricada e assinada, por todos os membros da banca.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "9) Estar ciente da minha responsabilidade da entrega do Gabarito da Prova, em cópia impressa/manuscrita, "
+                + "rubricada e assinada, por todos os membros da banca.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "10) Estar ciente da obrigação de formular as respostas aos possíveis recursos impetrados contra as "
+                + "questões das provas e contra o gabarito provisório das mesmas.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "11) Estar ciente de que os pacotes, depois de lacrados, devem conter as assinaturas dos membros da "
+                + "banca nas linhas que indicam a numeração dos lacres e dos respectivos malotes.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        term.add( paragraph );
+        
+        text = "12) Comprometo-me, assim, a desempenhar a função especificada neste contrato, da forma acordada com a "
+                + "COPESE/UFT, e declaro concordar com a forma de contratação, com o valor total a ser recebido e com a "
+                + "forma de pagamento apresentada pela Copese, conforme legislação vigente.";
+        paragraph = new Paragraph( text, font );
+        paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
+        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        term.add( paragraph );
+        
+        text = "Concordo com a decisão de que os casos omissos neste termo serão tratados com a direção da Copese.";
+        paragraph = new Paragraph( text, font );
+        term.add( paragraph );
+        
+        Calendar calendar = Calendar.getInstance();
+        text = "Palmas, " + calendar.get( Calendar.DAY_OF_MONTH ) + "/" + calendar.get( Calendar.MONTH ) + "/" + calendar.get( Calendar.YEAR );
+        paragraph = new Paragraph( text, font );
+        term.add( paragraph );
+        
+        text = "_____________________________________";
+        paragraph = new Paragraph( text, font );
+        paragraph.setAlignment( Element.ALIGN_CENTER );
+        term.add( paragraph );
+        
+        text = "Assinatura";
+        paragraph = new Paragraph( text, font );
+        paragraph.setAlignment( Element.ALIGN_CENTER );
+        term.add( paragraph );
+        
+        term.close();
+        
+        return term;
     }
     
     /**
@@ -246,6 +419,7 @@ public class CopeseVisitor extends javax.swing.JFrame
         jButtonOut = new javax.swing.JButton();
         jComboEvent = new javax.swing.JComboBox();
         jLabel30 = new javax.swing.JLabel();
+        jButtonTerm = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
@@ -363,6 +537,14 @@ public class CopeseVisitor extends javax.swing.JFrame
 
         jLabel30.setText("Evento:");
 
+        jButtonTerm.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButtonTerm.setText("Gerar Termo");
+        jButtonTerm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonTermActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -388,7 +570,9 @@ public class CopeseVisitor extends javax.swing.JFrame
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jButtonDetails)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 135, Short.MAX_VALUE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
+                                .addComponent(jButtonTerm)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jButtonIn)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jButtonOut, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -406,10 +590,12 @@ public class CopeseVisitor extends javax.swing.JFrame
                             .addComponent(jName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButtonOut, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButtonIn, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jButtonDetails, javax.swing.GroupLayout.Alignment.TRAILING))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jButtonDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jButtonTerm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(jButtonOut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
+                            .addComponent(jButtonIn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel29)
@@ -532,7 +718,7 @@ public class CopeseVisitor extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1))
+                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -821,6 +1007,16 @@ public class CopeseVisitor extends javax.swing.JFrame
         catch( SQLException e ) { JOptionPane.showMessageDialog( null, e.getMessage() ); }
     }//GEN-LAST:event_jMenuDeclarationActionPerformed
 
+    private void jButtonTermActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTermActionPerformed
+        try
+        {
+            Person person = personDAO.findByName( (String) jTable2.getValueAt( jTable2.getSelectedRow(), 0) );
+            Event event = eventDAO.findByName( (String) jTable2.getValueAt( jTable2.getSelectedRow(), 6) );
+            generateTermCommitement( person, event );
+        }
+        catch( Exception e ) { e.printStackTrace(); }
+    }//GEN-LAST:event_jButtonTermActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -863,6 +1059,7 @@ public class CopeseVisitor extends javax.swing.JFrame
     private javax.swing.JButton jButtonDetails;
     private javax.swing.JButton jButtonIn;
     private javax.swing.JButton jButtonOut;
+    private javax.swing.JButton jButtonTerm;
     private javax.swing.JComboBox jComboEvent;
     private javax.swing.JComboBox jComboPlace;
     private javax.swing.JTextField jDescription;
