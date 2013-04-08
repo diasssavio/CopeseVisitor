@@ -89,4 +89,32 @@ public class AddressDAO
         
         return address;
     }
+    
+    public Address first() throws SQLException
+    {
+        Integer id = (Integer) DBManager.getInstance().getValue( "SELECT MIN(id) FROM address" );
+        return selectPK( id );
+    }
+    
+    public Address last() throws SQLException
+    {
+        Integer id = (Integer) DBManager.getInstance().getValue( "SELECT MAX(id) FROM address" );
+        return selectPK( id );
+    }
+    
+    public Address next( Address address ) throws SQLException
+    {
+        if( address != null )
+            return selectPK( (Integer) DBManager.getInstance().getValue( "SELECT id FROM address WHERE id > ? AND id <= (SELECT MAX(id) FROM person) ORDER BY id LIMIT 1", new Object[]{ address.getId() }) );
+        else
+            return null;
+    }
+    
+    public Address previous( Address address ) throws SQLException
+    {
+        if( address != null )
+            return selectPK( (Integer) DBManager.getInstance().getValue( "SELECT id FROM address WHERE id < ? AND id >= (SELECT MIN(id) FROM person) ORDER BY id DESC LIMIT 1", new Object[]{ address.getId() } ) );
+        else
+            return null;
+    }
 }

@@ -76,4 +76,32 @@ public class BankaccountDAO {
         
         return account;
     }
+    
+    public Bankaccount first() throws SQLException
+    {
+        Integer id = (Integer) DBManager.getInstance().getValue( "SELECT MIN(id) FROM bankaccount" );
+        return selectPK( id );
+    }
+    
+    public Bankaccount last() throws SQLException
+    {
+        Integer id = (Integer) DBManager.getInstance().getValue( "SELECT MAX(id) FROM bankaccount" );
+        return selectPK( id );
+    }
+    
+    public Bankaccount next( Bankaccount account ) throws SQLException
+    {
+        if( account != null )
+            return selectPK( (Integer) DBManager.getInstance().getValue( "SELECT id FROM bankaccount WHERE id > ? AND id <= (SELECT MAX(id) FROM person) ORDER BY id LIMIT 1", new Object[]{ account.getId() }) );
+        else
+            return null;
+    }
+    
+    public Bankaccount previous( Bankaccount account ) throws SQLException
+    {
+        if( account != null )
+            return selectPK( (Integer) DBManager.getInstance().getValue( "SELECT id FROM bankaccount WHERE id < ? AND id >= (SELECT MIN(id) FROM person) ORDER BY id DESC LIMIT 1", new Object[]{ account.getId() } ) );
+        else
+            return null;
+    }
 }
