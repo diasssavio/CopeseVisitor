@@ -93,7 +93,7 @@ public class DeclarationForm extends JFrame
         // Creating table
         PdfPTable table = new PdfPTable( new float[] { 0.5f, 0.2f, 0.3f } );
         
-        // Table header
+        // Header
         String headerText = "Pela presente DECLARAÇÃO DE EXECUÇÃO DE ATIVIDADES, eu " + person.getName() 
                 + " matrícula SIAPE nº " + person.getSiape() + ", ocupante do cargo de " + person.getUftlink()
                 + ", em exercício na (o)" + ", declaro ter participado, no ano em curso, das seguintes atividades"
@@ -102,9 +102,8 @@ public class DeclarationForm extends JFrame
         
         paragraph = new Paragraph( headerText, font );
         paragraph.setAlignment( Element.ALIGN_JUSTIFIED_ALL );
-        PdfPCell header = new PdfPCell( paragraph );
-        header.setColspan( 3 );
-        table.addCell( header );
+        paragraph.setSpacingAfter( mettersToPoints( 0.5f ) );
+        declaration.add( paragraph );
         
         // Table activities
         table.addCell( "Atividades" );
@@ -140,26 +139,29 @@ public class DeclarationForm extends JFrame
         paragraph = new Paragraph( hours.toString() );
         paragraph.setAlignment( Element.ALIGN_CENTER );
         table.addCell( paragraph );
+        table.setSpacingAfter( mettersToPoints( 0.5f ) );
+        
+        table.setHorizontalAlignment( Element.ALIGN_CENTER );
+        
+        declaration.add( table );
         
         // Document end ---- TODO
         String endText = "Declaro, sob minha inteira responsabilidade, serem exatas e verdadeiras as "
                 + "informações aqui prestadas, sob pena de responsabilidades administrativa, civil e penal.";
         paragraph = new Paragraph( endText, font );
+        paragraph.setAlignment( Element.ALIGN_JUSTIFIED_ALL );
+        paragraph.setSpacingAfter( mettersToPoints( 0.5f ) );
+        declaration.add( paragraph );
         
         Calendar calendar = Calendar.getInstance();
-        paragraph.add( "\n\nPalmas, " + calendar.get( Calendar.DAY_OF_MONTH ) + " de " + monthMap[ calendar.get( Calendar.MONTH ) ] + " de " + calendar.get( Calendar.YEAR ) + "." );
-        
-        paragraph.add("\n\n______________________________________");
-        paragraph.add("\nAssinatura do Servidor");
-        
+        paragraph = new Paragraph( "Palmas, " + calendar.get( Calendar.DAY_OF_MONTH ) + " de " + monthMap[ calendar.get( Calendar.MONTH ) ] + " de " + calendar.get( Calendar.YEAR ) + ".", font  );
         paragraph.setAlignment( Element.ALIGN_CENTER );
-        PdfPCell end = new PdfPCell( paragraph );
-        end.setColspan( 3 );
-        table.addCell( end );
+        declaration.add( paragraph );
         
-        table.setHorizontalAlignment( Element.ALIGN_CENTER );
-        
-        declaration.add( table );
+        paragraph = new Paragraph("______________________________________", font );
+        paragraph.add("\nAssinatura do Servidor");
+        paragraph.setAlignment( Element.ALIGN_CENTER );
+        declaration.add( paragraph );
         
         declaration.close();
         

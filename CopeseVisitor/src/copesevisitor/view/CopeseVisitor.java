@@ -61,6 +61,8 @@ public class CopeseVisitor extends javax.swing.JFrame
     private ActivityDAO activityDAO;
     private EventDAO eventDAO;
     
+    private String[] monthMap;
+    
     /** Creates new form CopeseVisitor */
     public CopeseVisitor() throws SQLException, ParseException
     {
@@ -73,6 +75,8 @@ public class CopeseVisitor extends javax.swing.JFrame
         initComponents();
         
         this.setLocationRelativeTo( null );
+        
+        monthMap = new String[] { "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" };
         
         // Loading some components
         loadPlacesComboBox();
@@ -103,7 +107,7 @@ public class CopeseVisitor extends javax.swing.JFrame
         Document term = new Document( PageSize.A4, mettersToPoints(2f), mettersToPoints(2f), mettersToPoints(2f), mettersToPoints(2f) );
         PdfWriter.getInstance( term, new FileOutputStream( "Termo de Compromisso - Banca.pdf" ) );
         
-        Font font = new Font( Font.FontFamily.TIMES_ROMAN, 11 );
+        Font font = new Font( Font.FontFamily.TIMES_ROMAN, 10 );
 
         term.open();
         
@@ -119,7 +123,7 @@ public class CopeseVisitor extends javax.swing.JFrame
         
         paragraph = new Paragraph( "UNIVERSIDADE FEDERAL DO TOCANTINS", font );
         paragraph.setAlignment( Element.ALIGN_CENTER );
-        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        paragraph.setSpacingAfter( mettersToPoints( 0.5f ) );
         term.add( paragraph );
         
         paragraph = new Paragraph( "Termo de Compromisso", font );
@@ -134,21 +138,21 @@ public class CopeseVisitor extends javax.swing.JFrame
                 + "para seleção de vagas no " + event.getName() + ".";
         paragraph = new Paragraph( text, font );
         paragraph.setAlignment( Element.ALIGN_JUSTIFIED_ALL );
-        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        paragraph.setSpacingAfter( mettersToPoints( 0.5f ) );
         term.add( paragraph );
         
         text = "Eu, " + person.getName() + ", portador da Carteira de Identidade nº " + person.getRg()
                 + " " + person.getWichorgan() + " e CPF " + person.getCpf();
         paragraph = new Paragraph( text, font );
         paragraph.setAlignment( Element.ALIGN_JUSTIFIED_ALL );
-        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        paragraph.setSpacingAfter( mettersToPoints( 0.5f ) );
         term.add( paragraph );
         
         font.setStyle( Font.BOLD );
         
         paragraph = new Paragraph( "DECLARO", font );
         paragraph.setAlignment( Element.ALIGN_CENTER );
-        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        paragraph.setSpacingAfter( mettersToPoints( 0.5f ) );
         term.add( paragraph );
         
         font.setStyle( Font.NORMAL );
@@ -224,7 +228,7 @@ public class CopeseVisitor extends javax.swing.JFrame
                 + "forma de pagamento apresentada pela Copese, conforme legislação vigente.";
         paragraph = new Paragraph( text, font );
         paragraph.setIndentationLeft( mettersToPoints( 0.64f ) );
-        paragraph.setSpacingAfter( mettersToPoints( 1 ) );
+        paragraph.setSpacingAfter( mettersToPoints( 0.5f ) );
         term.add( paragraph );
         
         text = "Concordo com a decisão de que os casos omissos neste termo serão tratados com a direção da Copese.";
@@ -232,7 +236,7 @@ public class CopeseVisitor extends javax.swing.JFrame
         term.add( paragraph );
         
         Calendar calendar = Calendar.getInstance();
-        text = "Palmas, " + calendar.get( Calendar.DAY_OF_MONTH ) + "/" + calendar.get( Calendar.MONTH ) + "/" + calendar.get( Calendar.YEAR );
+        text = "Palmas, " + calendar.get( Calendar.DAY_OF_MONTH ) + " de " + monthMap[ calendar.get( Calendar.MONTH ) ] + " de " + calendar.get( Calendar.YEAR ) + "." ;
         paragraph = new Paragraph( text, font );
         term.add( paragraph );
         
@@ -436,7 +440,6 @@ public class CopeseVisitor extends javax.swing.JFrame
         jMenuReports = new javax.swing.JMenu();
         jMenuContacts = new javax.swing.JMenuItem();
         jMenuDeclaration = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
         jMenuAbout = new javax.swing.JMenuItem();
 
@@ -775,7 +778,7 @@ public class CopeseVisitor extends javax.swing.JFrame
 
         jMenuBar1.add(jMenuRegister);
 
-        jMenuReports.setText("Relatórios");
+        jMenuReports.setText("Exibir");
 
         jMenuContacts.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
         jMenuContacts.setText("Contatos");
@@ -793,9 +796,6 @@ public class CopeseVisitor extends javax.swing.JFrame
             }
         });
         jMenuReports.add(jMenuDeclaration);
-
-        jMenuItem2.setText("Termo de Compromisso - Banca");
-        jMenuReports.add(jMenuItem2);
 
         jMenuBar1.add(jMenuReports);
 
@@ -1076,7 +1076,6 @@ public class CopeseVisitor extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuExit;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenu jMenuHelp;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuPerson;
     private javax.swing.JMenuItem jMenuPlace;
     private javax.swing.JMenu jMenuRegister;

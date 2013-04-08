@@ -73,7 +73,7 @@
         </Menu>
         <Menu class="javax.swing.JMenu" name="jMenuReports">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Relat&#xf3;rios"/>
+            <Property name="text" type="java.lang.String" value="Exibir"/>
           </Properties>
           <SubComponents>
             <MenuItem class="javax.swing.JMenuItem" name="jMenuContacts">
@@ -94,11 +94,6 @@
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuDeclarationActionPerformed"/>
               </Events>
-            </MenuItem>
-            <MenuItem class="javax.swing.JMenuItem" name="jMenuItem2">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="Termo de Compromisso - Banca"/>
-              </Properties>
             </MenuItem>
           </SubComponents>
         </Menu>
