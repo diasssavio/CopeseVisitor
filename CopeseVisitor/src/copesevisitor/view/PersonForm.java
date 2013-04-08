@@ -99,7 +99,7 @@ public class PersonForm extends javax.swing.JFrame
         jComboBank.setSelectedIndex( -1 );
         jAgency.setText( null );
         jChecking.setText( null );
-        setSelectedRadioBox( null );
+        setSelectedRadioBox( null, null );
     }
     
     /**
@@ -112,7 +112,7 @@ public class PersonForm extends javax.swing.JFrame
             // Dados pessoais
             jName.setText( person.getName() );
             jFormattedCPF.setText( person.getCpf() );
-            jFormattedBirthDate.setText( DateFormat.getDateInstance().format( person.getBirthdate() ) );
+            jFormattedBirthDate.setText( person.getBirthdate() != null ? DateFormat.getDateInstance().format( person.getBirthdate() ) : null );
             jRG.setText( person.getRg() );
             jWichOrgan.setText( person.getWichorgan() );
             jEmail.setText( person.getEmail() );
@@ -137,7 +137,7 @@ public class PersonForm extends javax.swing.JFrame
             jComboBank.setSelectedItem( person.getBankaccount().getBank().getName() );
             jAgency.setText( person.getBankaccount().getAgency() );
             jChecking.setText( person.getBankaccount().getChecking() );
-            setSelectedRadioBox( person.getUftlink() );
+            setSelectedRadioBox( person.getUftlink(), person.getStocking() );
         }
         else
             cleanForm();
@@ -167,8 +167,8 @@ public class PersonForm extends javax.swing.JFrame
         if( jRadioStudent.isSelected() ) uftLink = jRadioStudent.getText();
         if( jRadioTrainee.isSelected() ) uftLink = jRadioTrainee.getText();
         if( jRadioColleger.isSelected() ) uftLink = jRadioColleger.getText();
-        if( jRadioOutsourced.isSelected() ) uftLink = jRadioOutsourced.getText() + " " + jOutsourced.getText();
-        if( jRadioExternal.isSelected() ) uftLink = jRadioExternal.getText() + " " + jExternal.getText();
+        if( jRadioOutsourced.isSelected() ) uftLink = jRadioOutsourced.getText();
+        if( jRadioExternal.isSelected() ) uftLink = jRadioExternal.getText();
         
         return uftLink;
     }
@@ -177,7 +177,7 @@ public class PersonForm extends javax.swing.JFrame
      * Marca o radio box correspondente à String passada
      * @param uftLink String que representa o radio box
      */
-    private void setSelectedRadioBox( String uftLink )
+    private void setSelectedRadioBox( String uftLink, String stocking )
     {
         try
         {
@@ -186,16 +186,20 @@ public class PersonForm extends javax.swing.JFrame
             else if( uftLink.equals( jRadioStudent.getText() ) ) jRadioStudent.setSelected( true );
             else if( uftLink.equals( jRadioTrainee.getText() ) ) jRadioTrainee.setSelected( true );
             else if( uftLink.equals( jRadioColleger.getText() ) ) jRadioColleger.setSelected( true );
-            else if( uftLink.substring( 0, 14 ).equals( jRadioExternal.getText() ) )
+            else if( uftLink.equals( jRadioExternal.getText() ) )
             {
                 jRadioExternal.setSelected( true );
-                jExternal.setText( uftLink.substring( 14 ) );
+                jExternal.setText( stocking );
+                return;
             }
-            else if( uftLink.substring( 0, 23 ).equals( jRadioOutsourced.getText() ) )
+            else if( uftLink.equals( jRadioOutsourced.getText() ) )
             {
                 jRadioOutsourced.setSelected( true );
-                jOutsourced.setText( uftLink.substring( 23 ) );
+                jOutsourced.setText( stocking );
+                return;
             }
+            
+            jStocking.setText( stocking );
         }
         catch( NullPointerException e )
         {
@@ -209,6 +213,7 @@ public class PersonForm extends javax.swing.JFrame
             jOutsourced.setEnabled( false );
             jExternal.setText( null );
             jExternal.setEnabled( false );
+            jStocking.setText( null );
         }
     }
     
@@ -221,8 +226,8 @@ public class PersonForm extends javax.swing.JFrame
         // Getting address information
         Address tempAd = new Address();
         tempAd.setAddress( jAddress.getText() );
-        tempAd.setNumber( jNumber.getText().equals( "" ) ? Integer.parseInt( jNumber.getText() ) : null );
-        tempAd.setComplement( jComplement.getText().equals( "" ) ? jComplement.getText() : null );
+        tempAd.setNumber( !jNumber.getText().equals( "" ) ? Integer.parseInt( jNumber.getText() ) : null );
+        tempAd.setComplement( jComplement.getText() );
         tempAd.setNeighborhood( jNeighborhood.getText() );
         tempAd.setCity( jCity.getText() );
         tempAd.setUf( jComboUF.getSelectedItem().toString() );
@@ -259,7 +264,7 @@ public class PersonForm extends javax.swing.JFrame
         Person temp = new Person();
         temp.setName( jName.getText() );
         temp.setCpf( jFormattedCPF.getText() );
-        temp.setBirthdate( DateFormat.getDateInstance().parse( jFormattedBirthDate.getText() ) );
+        temp.setBirthdate( jFormattedBirthDate.getValue() != null ? DateFormat.getDateInstance().parse( jFormattedBirthDate.getText() ) : null );
         temp.setRg( jRG.getText() );
         temp.setWichorgan( jWichOrgan.getText() != null ? jWichOrgan.getText() : null );
         temp.setEmail( jEmail.getText() );
@@ -269,7 +274,15 @@ public class PersonForm extends javax.swing.JFrame
         temp.setPhone1( jFormattedPhone1.getText() );
         temp.setPhone2( jFormattedPhone2.getValue() != null ? jFormattedPhone2.getText() : null );
         temp.setPhone3( jFormattedPhone3.getValue() != null ? jFormattedPhone3.getText() : null );
+        
         temp.setUftlink( getSelectedRadioBox() );
+        if( temp.getUftlink().equals( jRadioOutsourced.getText() ) )
+            temp.setStocking( jOutsourced.getText() );
+        else if( temp.getUftlink().equals( jRadioExternal.getText() ) )
+            temp.setStocking( jExternal.getText() );
+        else
+            temp.setStocking( jStocking.getText() );
+        
         temp.setAddress( address );
         temp.setBankaccount( account );
         
@@ -365,6 +378,8 @@ public class PersonForm extends javax.swing.JFrame
         jSiape = new javax.swing.JTextField();
         jLabel27 = new javax.swing.JLabel();
         jEmail = new javax.swing.JTextField();
+        jStocking = new javax.swing.JTextField();
+        jLabel28 = new javax.swing.JLabel();
         jButtonSearch = new javax.swing.JButton();
         jButtonPrevious = new javax.swing.JButton();
         jButtonFirst = new javax.swing.JButton();
@@ -515,6 +530,8 @@ public class PersonForm extends javax.swing.JFrame
 
         jLabel27.setText("E-mail:");
 
+        jLabel28.setText("Lotação:");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -633,20 +650,27 @@ public class PersonForm extends javax.swing.JFrame
                         .addGap(18, 18, 18)
                         .addComponent(jOutsourced))
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jRadioProfessor)
-                        .addGap(18, 18, 18)
-                        .addComponent(jRadioTechnician)
-                        .addGap(18, 18, 18)
-                        .addComponent(jRadioStudent)
-                        .addGap(18, 18, 18)
-                        .addComponent(jRadioTrainee)
-                        .addGap(18, 18, 18)
-                        .addComponent(jRadioColleger)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jRadioExternal)
                         .addGap(18, 18, 18)
-                        .addComponent(jExternal)))
+                        .addComponent(jExternal))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jRadioProfessor)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addGap(21, 21, 21)
+                                .addComponent(jLabel28)))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jRadioTechnician)
+                                .addGap(18, 18, 18)
+                                .addComponent(jRadioStudent)
+                                .addGap(18, 18, 18)
+                                .addComponent(jRadioTrainee)
+                                .addGap(18, 18, 18)
+                                .addComponent(jRadioColleger)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                            .addComponent(jStocking))))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -740,7 +764,11 @@ public class PersonForm extends javax.swing.JFrame
                     .addComponent(jRadioStudent)
                     .addComponent(jRadioTrainee)
                     .addComponent(jRadioColleger))
-                .addGap(12, 12, 12)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jStocking, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel28))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 7, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jOutsourced, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jRadioOutsourced))
@@ -748,7 +776,7 @@ public class PersonForm extends javax.swing.JFrame
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jExternal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jRadioExternal))
-                .addContainerGap(11, Short.MAX_VALUE))
+                .addGap(23, 23, 23))
         );
 
         jButtonSearch.setIcon(new javax.swing.ImageIcon(getClass().getResource("/copesevisitor/view/images/search.png"))); // NOI18N
@@ -847,7 +875,7 @@ public class PersonForm extends javax.swing.JFrame
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButtonDelete, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+                    .addComponent(jButtonDelete, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonAdd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonLast, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -878,9 +906,21 @@ public class PersonForm extends javax.swing.JFrame
      */
     private void jRadioOutsourcedStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jRadioOutsourcedStateChanged
         if( jRadioOutsourced.isSelected() )
+        {
             jOutsourced.setEnabled( true );
-        else
+            jStocking.setEnabled( false );
+        }
+        else if( jRadioExternal.isSelected() )
+        {
             jOutsourced.setEnabled( false );
+            jStocking.setEnabled( false );
+        }
+        else
+        {
+            jStocking.setEnabled( true );
+            jExternal.setEnabled( false );
+            jOutsourced.setEnabled( false );
+        }
     }//GEN-LAST:event_jRadioOutsourcedStateChanged
 
     /**
@@ -889,9 +929,21 @@ public class PersonForm extends javax.swing.JFrame
      */
     private void jRadioExternalStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jRadioExternalStateChanged
         if( jRadioExternal.isSelected() )
+        {
             jExternal.setEnabled( true );
-        else
+            jStocking.setEnabled( false );
+        }
+        else if( jRadioOutsourced.isSelected() )
+        {
             jExternal.setEnabled( false );
+            jStocking.setEnabled( false );
+        }
+        else
+        {
+            jStocking.setEnabled( true );
+            jExternal.setEnabled( false );
+            jOutsourced.setEnabled( false );
+        }
     }//GEN-LAST:event_jRadioExternalStateChanged
 
     /**
@@ -907,7 +959,11 @@ public class PersonForm extends javax.swing.JFrame
      * @param evt 
      */
     private void jButtonPreviousActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonPreviousActionPerformed
-        try{ person = personDAO.previous( person ); }
+        try{ 
+            person = personDAO.previous( person ); 
+            address = person.getAddress();
+            account = person.getBankaccount();
+        }
         catch( SQLException e ){ JOptionPane.showMessageDialog( null, e.getMessage() ); }
         updateView();
     }//GEN-LAST:event_jButtonPreviousActionPerformed
@@ -917,7 +973,11 @@ public class PersonForm extends javax.swing.JFrame
      * @param evt 
      */
     private void jButtonFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonFirstActionPerformed
-        try{ person = personDAO.first(); }
+        try{ 
+            person = personDAO.first(); 
+            address = person.getAddress();
+            account = person.getBankaccount();
+        }
         catch( SQLException e ){ JOptionPane.showMessageDialog( null, e.getMessage() ); }
         updateView();
     }//GEN-LAST:event_jButtonFirstActionPerformed
@@ -927,7 +987,11 @@ public class PersonForm extends javax.swing.JFrame
      * @param evt 
      */
     private void jButtonLastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLastActionPerformed
-        try{ person = personDAO.last(); }
+        try{ 
+            person = personDAO.last(); 
+            address = person.getAddress();
+            account = person.getBankaccount();
+        }
         catch( SQLException e ){ JOptionPane.showMessageDialog( null, e.getMessage() ); }
         updateView();
     }//GEN-LAST:event_jButtonLastActionPerformed
@@ -937,7 +1001,11 @@ public class PersonForm extends javax.swing.JFrame
      * @param evt 
      */
     private void jButtonNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonNextActionPerformed
-        try{ person = personDAO.next( person ); }
+        try{
+            person = personDAO.next( person ); 
+            address = person.getAddress();
+            account = person.getBankaccount();
+        }
         catch( SQLException e ){ JOptionPane.showMessageDialog( null, e.getMessage() ); }
         updateView();
     }//GEN-LAST:event_jButtonNextActionPerformed
@@ -948,8 +1016,13 @@ public class PersonForm extends javax.swing.JFrame
      */
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
         try{ 
+            addressDAO.delete( address );
+            accountDAO.delete( account );
             personDAO.delete( person );
+            
             person = personDAO.first();
+            account = person.getBankaccount();
+            address = person.getAddress();
         } catch( SQLException e ) { JOptionPane.showMessageDialog( null, e.getMessage() ); }
         updateView();
     }//GEN-LAST:event_jButtonDeleteActionPerformed
@@ -1065,6 +1138,7 @@ public class PersonForm extends javax.swing.JFrame
     private javax.swing.JLabel jLabel25;
     private javax.swing.JLabel jLabel26;
     private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel28;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1091,6 +1165,7 @@ public class PersonForm extends javax.swing.JFrame
     private javax.swing.JSeparator jSeparator4;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JTextField jSiape;
+    private javax.swing.JTextField jStocking;
     private javax.swing.JTextField jWichOrgan;
     // End of variables declaration//GEN-END:variables
 }

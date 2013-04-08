@@ -27,7 +27,7 @@ public class PersonDAO {
         if( id != null ) person.setId( id + 1 );
         else person.setId( ( Integer )1 );
         
-        PreparedStatement statement = connection.prepareStatement( "INSERT INTO person (id, cpf, name, birthdate, rg, wichorgan, email, gender, pispasep, siape, phone1, phone2, phone3, uftlink, bankaccount_id, address_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" );
+        PreparedStatement statement = connection.prepareStatement( "INSERT INTO person (id, cpf, name, birthdate, rg, wichorgan, email, gender, pispasep, siape, phone1, phone2, phone3, uftlink, stocking, bankaccount_id, address_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)" );
         
         statement.setObject( 1, person.getId() );
         statement.setObject( 2, person.getCpf() );
@@ -43,8 +43,9 @@ public class PersonDAO {
         statement.setObject( 12, person.getPhone2() );
         statement.setObject( 13, person.getPhone3() );
         statement.setObject( 14, person.getUftlink() );
-        statement.setObject( 15, person.getBankaccount().getId() );
-        statement.setObject( 16, person.getAddress().getId() );
+        statement.setObject( 15, person.getStocking() );
+        statement.setObject( 16, person.getBankaccount().getId() );
+        statement.setObject( 17, person.getAddress().getId() );
         
         statement.executeUpdate();
         statement.close();
@@ -52,7 +53,7 @@ public class PersonDAO {
     
     public void update( Person person ) throws SQLException
     {
-        PreparedStatement statement = connection.prepareStatement( "UPDATE person SET id=?, cpf=?, name=?, birthdate=?, rg=?, wichorgan=?, email=?, gender=?, pispasep=?, siape=?, phone1=?, phone2=?, phone3=?, uftlink=?, place_id=?, bankaccount_id=?, address_id=? WHERE id=?" );
+        PreparedStatement statement = connection.prepareStatement( "UPDATE person SET id=?, cpf=?, name=?, birthdate=?, rg=?, wichorgan=?, email=?, gender=?, pispasep=?, siape=?, phone1=?, phone2=?, phone3=?, uftlink=?, stocking=?, place_id=?, bankaccount_id=?, address_id=? WHERE id=?" );
         
         statement.setObject( 1, person.getId() );
         statement.setObject( 2, person.getCpf() );
@@ -68,10 +69,11 @@ public class PersonDAO {
         statement.setObject( 12, person.getPhone2() );
         statement.setObject( 13, person.getPhone3() );
         statement.setObject( 14, person.getUftlink() );
-        statement.setObject( 15, person.getPlace() != null ? person.getPlace().getId() : null );
-        statement.setObject( 16, person.getBankaccount().getId() );
-        statement.setObject( 17, person.getAddress().getId() );
-        statement.setObject( 18, person.getId() );
+        statement.setObject( 15, person.getStocking() );
+        statement.setObject( 16, person.getPlace() != null ? person.getPlace().getId() : null );
+        statement.setObject( 17, person.getBankaccount().getId() );
+        statement.setObject( 18, person.getAddress().getId() );
+        statement.setObject( 19, person.getId() );
         
         statement.executeUpdate();
         statement.close();
@@ -111,6 +113,7 @@ public class PersonDAO {
             person.setPhone2( (String) result.getObject( "phone2" ) );
             person.setPhone3( (String) result.getObject( "phone3" ) );
             person.setUftlink( (String) result.getObject( "uftlink" ) );
+            person.setStocking( (String) result.getObject( "stocking" ) );
             person.setPlace( new PlaceDAO( connection ).selectPK( (Integer) result.getObject( "place_id" ) ) );
             person.setBankaccount( new BankaccountDAO( connection ).selectPK( (Integer) result.getObject( "bankaccount_id" ) ) );
             person.setAddress( new AddressDAO( connection ).selectPK( (Integer) result.getObject( "address_id" ) ) );
@@ -177,6 +180,7 @@ public class PersonDAO {
             toAdd.setPhone2( result.getString( "phone2" ) );
             toAdd.setPhone3( result.getString( "phone3" ) );
             toAdd.setUftlink( result.getString( "uftlink" ) );
+            toAdd.setStocking( result.getString( "stocking" ) );
             toAdd.setPlace( new PlaceDAO( connection ).selectPK( result.getInt( "place_id" ) ) );
             toAdd.setBankaccount( new BankaccountDAO( connection ).selectPK( result.getInt( "bankaccount_id" ) ) );
             toAdd.setAddress( new AddressDAO( connection ).selectPK( result.getInt( "address_id" ) ) );
@@ -218,6 +222,7 @@ public class PersonDAO {
             person.setPhone2( result.getString( "phone2" ) );
             person.setPhone3( result.getString( "phone3" ) );
             person.setUftlink( result.getString( "uftlink" ) );
+            person.setStocking( result.getString( "stocking" ) );
             person.setPlace( new PlaceDAO( connection ).selectPK( result.getInt( "place_id" ) ) );
             person.setBankaccount( new BankaccountDAO( connection ).selectPK( result.getInt( "bankaccount_id" ) ) );
             person.setAddress( new AddressDAO( connection ).selectPK( result.getInt( "address_id" ) ) );
@@ -255,6 +260,7 @@ public class PersonDAO {
             person.setPhone2( (String) result.getObject( "phone2" ) );
             person.setPhone3( (String) result.getObject( "phone3" ) );
             person.setUftlink( (String) result.getObject( "uftlink" ) );
+            person.setStocking( (String) result.getObject( "stocking" ) );
             person.setPlace( new PlaceDAO( connection ).selectPK( (Integer) result.getObject( "place_id" ) ) );
             person.setBankaccount( new BankaccountDAO( connection ).selectPK( (Integer) result.getObject( "bankaccount_id" ) ) );
             person.setAddress( new AddressDAO( connection ).selectPK( (Integer) result.getObject( "address_id" ) ) );
@@ -294,6 +300,7 @@ public class PersonDAO {
             toAdd.setPhone2( result.getString( "phone2" ) );
             toAdd.setPhone3( result.getString( "phone3" ) );
             toAdd.setUftlink( result.getString( "uftlink" ) );
+            toAdd.setStocking( result.getString( "stocking" ) );
             toAdd.setPlace( new PlaceDAO( connection ).selectPK( result.getInt( "place_id" ) ) );
             toAdd.setBankaccount( new BankaccountDAO( connection ).selectPK( result.getInt( "bankaccount_id" ) ) );
             toAdd.setAddress( new AddressDAO( connection ).selectPK( result.getInt( "address_id" ) ) );
