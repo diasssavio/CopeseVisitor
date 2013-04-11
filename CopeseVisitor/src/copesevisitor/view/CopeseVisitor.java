@@ -424,6 +424,7 @@ public class CopeseVisitor extends javax.swing.JFrame
         jComboEvent = new javax.swing.JComboBox();
         jLabel30 = new javax.swing.JLabel();
         jButtonTerm = new javax.swing.JButton();
+        jButtonDeclaration = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
@@ -439,7 +440,6 @@ public class CopeseVisitor extends javax.swing.JFrame
         jMenuEvent = new javax.swing.JMenuItem();
         jMenuReports = new javax.swing.JMenu();
         jMenuContacts = new javax.swing.JMenuItem();
-        jMenuDeclaration = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
         jMenuAbout = new javax.swing.JMenuItem();
 
@@ -528,7 +528,7 @@ public class CopeseVisitor extends javax.swing.JFrame
 
         jLabel29.setText("Local:");
 
-        jDescription.setText("descrição");
+        jDescription.setText("Descrição");
 
         jButtonOut.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jButtonOut.setText("Sair");
@@ -541,10 +541,18 @@ public class CopeseVisitor extends javax.swing.JFrame
         jLabel30.setText("Evento:");
 
         jButtonTerm.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jButtonTerm.setText("Gerar Termo");
+        jButtonTerm.setText("Termo");
         jButtonTerm.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonTermActionPerformed(evt);
+            }
+        });
+
+        jButtonDeclaration.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jButtonDeclaration.setText("Declaração");
+        jButtonDeclaration.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeclarationActionPerformed(evt);
             }
         });
 
@@ -561,44 +569,42 @@ public class CopeseVisitor extends javax.swing.JFrame
                             .addComponent(jLabel28)
                             .addComponent(jLabel29))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jName, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButtonTerm)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonDeclaration)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jButtonDetails)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonIn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButtonOut)
+                                .addGap(0, 7, Short.MAX_VALUE))
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addComponent(jComboPlace, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
                                 .addComponent(jLabel30)
                                 .addGap(18, 18, 18)
-                                .addComponent(jComboEvent, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jName, javax.swing.GroupLayout.PREFERRED_SIZE, 389, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addComponent(jButtonDetails)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
-                                .addComponent(jButtonTerm)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButtonIn)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButtonOut, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jDescription))))
+                                .addComponent(jComboEvent, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jDescription)))))
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel28)
-                            .addComponent(jName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(jButtonDetails, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jButtonTerm, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(jButtonOut, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
-                            .addComponent(jButtonIn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                .addGap(11, 11, 11)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel28)
+                    .addComponent(jName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButtonTerm)
+                    .addComponent(jButtonDeclaration)
+                    .addComponent(jButtonDetails)
+                    .addComponent(jButtonIn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButtonOut))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel29)
@@ -607,7 +613,7 @@ public class CopeseVisitor extends javax.swing.JFrame
                     .addComponent(jLabel30)
                     .addComponent(jComboEvent, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 226, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -721,7 +727,7 @@ public class CopeseVisitor extends javax.swing.JFrame
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jTabbedPane1))
                 .addContainerGap())
         );
         jPanel4Layout.setVerticalGroup(
@@ -788,14 +794,6 @@ public class CopeseVisitor extends javax.swing.JFrame
             }
         });
         jMenuReports.add(jMenuContacts);
-
-        jMenuDeclaration.setText("Declaração de Execução de Atividades");
-        jMenuDeclaration.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuDeclarationActionPerformed(evt);
-            }
-        });
-        jMenuReports.add(jMenuDeclaration);
 
         jMenuBar1.add(jMenuReports);
 
@@ -1002,11 +1000,6 @@ public class CopeseVisitor extends javax.swing.JFrame
         new ContactsForm().setVisible( true );
     }//GEN-LAST:event_jMenuContactsActionPerformed
 
-    private void jMenuDeclarationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuDeclarationActionPerformed
-        try{ new DeclarationForm().setVisible( true ); }
-        catch( SQLException e ) { JOptionPane.showMessageDialog( null, e.getMessage() ); }
-    }//GEN-LAST:event_jMenuDeclarationActionPerformed
-
     private void jButtonTermActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonTermActionPerformed
         try
         {
@@ -1016,6 +1009,12 @@ public class CopeseVisitor extends javax.swing.JFrame
         }
         catch( Exception e ) { e.printStackTrace(); }
     }//GEN-LAST:event_jButtonTermActionPerformed
+
+    private void jButtonDeclarationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeclarationActionPerformed
+        try{ new DeclarationForm( getSelectedPerson() ).setVisible( true ); }
+        catch( SQLException e ) { JOptionPane.showMessageDialog( null, e.getMessage() ); }
+        catch( ParseException e ) { e.printStackTrace(); }
+    }//GEN-LAST:event_jButtonDeclarationActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1056,6 +1055,7 @@ public class CopeseVisitor extends javax.swing.JFrame
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButtonDeclaration;
     private javax.swing.JButton jButtonDetails;
     private javax.swing.JButton jButtonIn;
     private javax.swing.JButton jButtonOut;
@@ -1071,7 +1071,6 @@ public class CopeseVisitor extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuAbout;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenuItem jMenuContacts;
-    private javax.swing.JMenuItem jMenuDeclaration;
     private javax.swing.JMenuItem jMenuEvent;
     private javax.swing.JMenuItem jMenuExit;
     private javax.swing.JMenu jMenuFile;

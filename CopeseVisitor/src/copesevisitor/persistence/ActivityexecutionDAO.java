@@ -115,4 +115,31 @@ public class ActivityexecutionDAO
         statement.close();
         return executions;
     }
+    
+    /**
+     * Lista as atividades de uma pessoa por pedaço de nome
+     * @param piece pedaço de nome
+     * @param person pessoa
+     * @return Lista de atividades
+     * @throws SQLException 
+     */
+    public List<Activityexecution> listByPiece( String piece, Person person ) throws SQLException
+    {
+        PreparedStatement statement = connection.prepareStatement( "SELECT * FROM activityexecution WHERE description LIKE '" + piece + "%' AND person_id = ?" );
+        
+        statement.setObject( 1, person.getId() );
+        
+        ResultSet result = statement.executeQuery();
+        List<Activityexecution> activities = new ArrayList<Activityexecution>();
+        while( result.next() )
+        {
+            Activityexecution toAdd = new Activityexecution( result.getInt( "id" ), result.getString( "description" ), 
+                    result.getString( "institution" ), result.getFloat( "hoursworked" ), result.getInt( "year" ));
+            toAdd.setPerson( person );
+            activities.add( toAdd );
+        }
+        statement.close();
+        
+        return activities;
+    }
 }

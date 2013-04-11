@@ -26,9 +26,11 @@ import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
 
 import java.util.List;
+import java.util.Calendar;
+import java.util.List;
+import java.util.ArrayList;
 
 import java.sql.SQLException;
-import java.util.Calendar;
 
 /**
  *
@@ -47,14 +49,16 @@ public class DeclarationForm extends JFrame
     /**
      * Creates new form DeclarationForm
      */
-    public DeclarationForm() throws SQLException
+    public DeclarationForm( Person person ) throws SQLException
     {
         initComponents();
         monthMap = new String[] { "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro" };
         this.setLocationRelativeTo( null );
         
         executionDAO = new ActivityexecutionDAO( DBManager.getInstance().getConnection() );
-        person = new PersonDAO( DBManager.getInstance().getConnection() ).first();
+        this.person = person;
+        executions = executionDAO.listExecutionByPerson( person );
+        
         updateTableActivity();
     }
 
@@ -110,8 +114,13 @@ public class DeclarationForm extends JFrame
         table.addCell( "Instituição" );
         table.addCell( "Horas Trabalhadas" );
         
+        // TODO -- Pegar atividades selecionadas na tabela para gerar PDF
+        List<Activityexecution> toGenerate = new ArrayList<Activityexecution>();
+        for( int i : jTable1.getSelectedRows() )
+            toGenerate.add( executions.get( i ) );
+            
         Double hours = 0.0;
-        for( Activityexecution activity : executions )
+        for( Activityexecution activity : toGenerate )
         {
             paragraph = new Paragraph( activity.getDescription(), font );
             paragraph.setAlignment( Element.ALIGN_CENTER );
@@ -173,28 +182,31 @@ public class DeclarationForm extends JFrame
      */
     private void updateTableActivity() throws SQLException
     {
-        executions = executionDAO.listExecutionByPerson( person );
-        Object[][] tableValue = new Object[executions.size()][5];
-        
-        for( Integer i = 0; i < executions.size(); i++ )
+//        executions = executionDAO.listExecutionByPerson( person );
+        if( executions != null )
         {
-            tableValue[i][0] = executions.get( i ).getDescription();
-            tableValue[i][1] = executions.get( i ).getInstitution();
-            tableValue[i][2] = executions.get( i ).getHoursworked();
-            tableValue[i][3] = executions.get( i ).getYear();
-            tableValue[i][4] = executions.get( i ).getPerson().getName();
+            Object[][] tableValue = new Object[executions.size()][5];
+
+            for( Integer i = 0; i < executions.size(); i++ )
+            {
+                tableValue[i][0] = executions.get( i ).getDescription();
+                tableValue[i][1] = executions.get( i ).getInstitution();
+                tableValue[i][2] = executions.get( i ).getHoursworked();
+                tableValue[i][3] = executions.get( i ).getYear();
+                tableValue[i][4] = executions.get( i ).getPerson().getName();
+            }
+
+            model = new DefaultTableModel( tableValue, new String [] { "Atividade", "Instituição", "Horas Trabalhadas", "Ano", "Pessoa" } ) {
+                Class[] types = new Class [] { java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class };
+                boolean[] canEdit = new boolean [] { true, true, true, true, false };
+
+                public Class getColumnClass(int columnIndex) { return types [columnIndex]; }
+                public boolean isCellEditable(int rowIndex, int columnIndex) { return canEdit [columnIndex]; }
+            };
+
+            jTable1.setModel( model );
+            jScrollPane1.setViewportView( jTable1 );
         }
-        
-        model = new DefaultTableModel( tableValue, new String [] { "Atividade", "Instituição", "Horas Trabalhadas", "Ano", "Pessoa" } ) {
-            Class[] types = new Class [] { java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class };
-            boolean[] canEdit = new boolean [] { true, true, true, true, false };
-            
-            public Class getColumnClass(int columnIndex) { return types [columnIndex]; }
-            public boolean isCellEditable(int rowIndex, int columnIndex) { return canEdit [columnIndex]; }
-        };
-        
-        jTable1.setModel( model );
-        jScrollPane1.setViewportView(jTable1);
     }
     
     /**
@@ -207,7 +219,7 @@ public class DeclarationForm extends JFrame
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jPerson = new javax.swing.JTextField();
+        jExecution = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
         jButtonNew = new javax.swing.JButton();
@@ -218,11 +230,11 @@ public class DeclarationForm extends JFrame
         setTitle("Declaração de Execução de Atividades");
 
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 12)); // NOI18N
-        jLabel1.setText("Pessoa:");
+        jLabel1.setText("Atividade:");
 
-        jPerson.addKeyListener(new java.awt.event.KeyAdapter() {
+        jExecution.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                jPersonKeyReleased(evt);
+                jExecutionKeyReleased(evt);
             }
         });
 
@@ -286,7 +298,7 @@ public class DeclarationForm extends JFrame
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addGap(18, 18, 18)
-                        .addComponent(jPerson, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jExecution, javax.swing.GroupLayout.PREFERRED_SIZE, 302, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButtonNew, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -304,7 +316,7 @@ public class DeclarationForm extends JFrame
                     .addComponent(jButtonNew, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonSave, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jButtonPrint, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPerson)
+                    .addComponent(jExecution)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 325, Short.MAX_VALUE)
@@ -361,22 +373,22 @@ public class DeclarationForm extends JFrame
      * 
      * @param evt 
      */
-    private void jPersonKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jPersonKeyReleased
+    private void jExecutionKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jExecutionKeyReleased
         try
         {
-            person = new PersonDAO( DBManager.getInstance().getConnection() ).getPersonByPieceOfName( jPerson.getText() );
-            if( person != null )
+            executions = executionDAO.listByPiece( jExecution.getText(), person );
+//            if( executions.size() > 0 )
                 updateTableActivity();
         }
         catch( SQLException e ) { JOptionPane.showMessageDialog( null, e.getMessage() ); }
-    }//GEN-LAST:event_jPersonKeyReleased
+    }//GEN-LAST:event_jExecutionKeyReleased
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonNew;
     private javax.swing.JButton jButtonPrint;
     private javax.swing.JButton jButtonSave;
+    private javax.swing.JTextField jExecution;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JTextField jPerson;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
