@@ -73,17 +73,17 @@ public class PersonForm extends javax.swing.JFrame
         
         // Dados pessoais
         jName.setText( null );
-        jFormattedCPF.setText( null );
-        jFormattedBirthDate.setText( null );
+        jFormattedCPF.setValue( null );
+        jFormattedBirthDate.setValue( null );
         jRG.setText( null );
         jWichOrgan.setText( null );
         jEmail.setText( null );
         jComboGender.setSelectedIndex( -1 );
-        jFormattedPIS.setText( null );
+        jFormattedPIS.setValue( null );
         jSiape.setText( null );
-        jFormattedPhone1.setText( null );
-        jFormattedPhone2.setText( null );
-        jFormattedPhone3.setText( null );
+        jFormattedPhone1.setValue( null );
+        jFormattedPhone2.setValue( null );
+        jFormattedPhone3.setValue( null );
 
         // Dados do endereço
         jAddress.setText( null );
@@ -93,7 +93,7 @@ public class PersonForm extends javax.swing.JFrame
         jCity.setText( null );
         jCity.setText( null );
         jComboUF.setSelectedIndex( -1 );
-        jFormattedCEP.setText( null );
+        jFormattedCEP.setValue( null );
 
         // Vinculo com a UFT
         jComboBank.setSelectedIndex( -1 );
@@ -269,19 +269,19 @@ public class PersonForm extends javax.swing.JFrame
         temp.setWichorgan( jWichOrgan.getText() != null ? jWichOrgan.getText() : null );
         temp.setEmail( jEmail.getText() );
         temp.setGender( jComboGender.getSelectedItem().toString() );
-        temp.setPispasep( jFormattedPIS.getText() );
-        temp.setSiape( jSiape.getText() );
+        temp.setPispasep( jFormattedPIS.getValue() != null ? jFormattedPIS.getText() : null );
+        temp.setSiape( !jSiape.getText().equals("") ? jSiape.getText() : null );
         temp.setPhone1( jFormattedPhone1.getText() );
         temp.setPhone2( jFormattedPhone2.getValue() != null ? jFormattedPhone2.getText() : null );
         temp.setPhone3( jFormattedPhone3.getValue() != null ? jFormattedPhone3.getText() : null );
         
         temp.setUftlink( getSelectedRadioBox() );
         if( temp.getUftlink().equals( jRadioOutsourced.getText() ) )
-            temp.setStocking( jOutsourced.getText() );
+            temp.setStocking( !jOutsourced.getText().equals("") ? jOutsourced.getText() : null );
         else if( temp.getUftlink().equals( jRadioExternal.getText() ) )
-            temp.setStocking( jExternal.getText() );
+            temp.setStocking( !jExternal.getText().equals("") ? jExternal.getText() : null );
         else
-            temp.setStocking( jStocking.getText() );
+            temp.setStocking( !jStocking.getText().equals("") ? jStocking.getText() : null );
         
         temp.setAddress( address );
         temp.setBankaccount( account );
