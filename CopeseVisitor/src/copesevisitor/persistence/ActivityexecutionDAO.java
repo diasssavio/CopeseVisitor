@@ -31,14 +31,16 @@ public class ActivityexecutionDAO
         if( id != null ) execution.setId( id + 1 );
         else execution.setId( 1 );
         
-        PreparedStatement statement = connection.prepareStatement( "INSERT INTO activityexecution (id, description, institution, hoursworked, year, person_id) VALUES (?, ?, ?, ?, ?, ?)" );
+        PreparedStatement statement = connection.prepareStatement( "INSERT INTO activityexecution (id, description, campus, edict, hoursworked, status, person_id) VALUES (?, ?, ?, ?, ?, ?, ?)" );
         
-        statement.setObject( 1, execution.getId() );
-        statement.setObject( 2, execution.getDescription() );
-        statement.setObject( 3, execution.getInstitution() );
-        statement.setObject( 4, execution.getHoursworked() );
-        statement.setObject( 5, execution.getYear() );
-        statement.setObject( 6, execution.getPerson().getId() );
+        int value = 1;
+        statement.setObject( value++, execution.getId() );
+        statement.setObject( value++, execution.getDescription() );
+        statement.setObject( value++, execution.getCampus() );
+        statement.setObject( value++, execution.getEdict() );
+        statement.setObject( value++, execution.getHoursworked() );
+        statement.setObject( value++, execution.getStatus() );
+        statement.setObject( value++, execution.getPerson().getId() );
         
         statement.executeUpdate();
         statement.close();
@@ -46,15 +48,17 @@ public class ActivityexecutionDAO
     
     public void update( Activityexecution execution ) throws SQLException
     {
-        PreparedStatement statement = connection.prepareStatement( "UPDATE activityexecution SET id=?, description=?, institution=?, hoursworked=?, year=?, person_id=? WHERE id=?" );
+        PreparedStatement statement = connection.prepareStatement( "UPDATE activityexecution SET id=?, description=?, campus=?, edict=?, hoursworked=?, status=?, person_id=? WHERE id=?" );
         
-        statement.setObject( 1, execution.getId() );
-        statement.setObject( 2, execution.getDescription() );
-        statement.setObject( 3, execution.getInstitution() );
-        statement.setObject( 4, execution.getHoursworked());
-        statement.setObject( 5, execution.getYear() );
-        statement.setObject( 6, execution.getPerson().getId() );
-        statement.setObject( 7, execution.getId() );
+        int value = 1;
+        statement.setObject( value++, execution.getId() );
+        statement.setObject( value++, execution.getDescription() );
+        statement.setObject( value++, execution.getCampus() );
+        statement.setObject( value++, execution.getEdict() );
+        statement.setObject( value++, execution.getHoursworked() );
+        statement.setObject( value++, execution.getStatus() );
+        statement.setObject( value++, execution.getPerson().getId() );
+        statement.setObject( value++, execution.getId() );
         
         statement.executeUpdate();
         statement.close();
@@ -82,9 +86,10 @@ public class ActivityexecutionDAO
         {
             execution = new Activityexecution( id );
             execution.setDescription( (String) result.getObject( "description" ) );
-            execution.setInstitution( (String) result.getObject( "institution" ) );
+            execution.setCampus( (String) result.getObject( "campus" ) );
+            execution.setEdict( (String) result.getObject( "edict" ) );
             execution.setHoursworked( (Float) result.getObject( "hoursworked" ) );
-            execution.setYear( (Integer) result.getObject( "year" ) );
+            execution.setStatus( (Boolean) result.getObject( "status" ) );
             execution.setPerson( new PersonDAO( connection ).selectPK( (Integer) result.getObject( "person_id" ) ) );
         }
         statement.close();
@@ -105,9 +110,10 @@ public class ActivityexecutionDAO
         {
             Activityexecution toAdd = new Activityexecution( result.getInt( "id" ) );
             toAdd.setDescription( (String) result.getObject( "description" ) );
-            toAdd.setInstitution( (String) result.getObject( "institution" ) );
+            toAdd.setCampus( (String) result.getObject( "campus" ) );
+            toAdd.setEdict( (String) result.getObject( "edict" ) );
             toAdd.setHoursworked( (Float) result.getObject( "hoursworked" ) );
-            toAdd.setYear( (Integer) result.getObject( "year" ) );
+            toAdd.setStatus( (Boolean) result.getObject( "status" ) );
             toAdd.setPerson( new PersonDAO( connection ).selectPK( (Integer) result.getObject( "person_id" ) ) );
             executions.add( toAdd );
         }
@@ -133,8 +139,8 @@ public class ActivityexecutionDAO
         List<Activityexecution> activities = new ArrayList<Activityexecution>();
         while( result.next() )
         {
-            Activityexecution toAdd = new Activityexecution( result.getInt( "id" ), result.getString( "description" ), 
-                    result.getString( "institution" ), result.getFloat( "hoursworked" ), result.getInt( "year" ));
+            Activityexecution toAdd = new Activityexecution( result.getInt( "id" ), result.getString( "description" ), result.getString( "campus" ),
+                    result.getString( "edict" ), result.getFloat( "hoursworked" ), (Boolean) result.getObject( "status" ) );
             toAdd.setPerson( person );
             activities.add( toAdd );
         }

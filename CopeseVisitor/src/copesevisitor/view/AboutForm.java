@@ -47,7 +47,7 @@ public class AboutForm extends javax.swing.JFrame {
 
         jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(0, 204, 0));
-        jLabel2.setText("CopeseVisitor 0.1");
+        jLabel2.setText("CopeseVisitor 0.1 beta 1");
 
         jLabel3.setText("Developed by: Sávio S. Dias");
 
@@ -74,7 +74,7 @@ public class AboutForm extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1))
-                .addContainerGap(87, Short.MAX_VALUE))
+                .addContainerGap(74, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

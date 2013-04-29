@@ -119,14 +119,14 @@ public class DeclarationForm extends JFrame
         for( int i : jTable1.getSelectedRows() )
             toGenerate.add( executions.get( i ) );
             
-        Double hours = 0.0;
+        double hours = 0.0;
         for( Activityexecution activity : toGenerate )
         {
             paragraph = new Paragraph( activity.getDescription(), font );
             paragraph.setAlignment( Element.ALIGN_CENTER );
             table.addCell( paragraph );
             
-            paragraph = new Paragraph( activity.getInstitution(), font );
+            paragraph = new Paragraph( activity.getEdict(), font );
             paragraph.setAlignment( Element.ALIGN_CENTER );
             table.addCell( paragraph );
             
@@ -145,7 +145,7 @@ public class DeclarationForm extends JFrame
         total.setColspan( 2 );
         table.addCell( total );
         
-        paragraph = new Paragraph( hours.toString() );
+        paragraph = new Paragraph( String.format( "%.1f", hours) );
         paragraph.setAlignment( Element.ALIGN_CENTER );
         table.addCell( paragraph );
         table.setSpacingAfter( mettersToPoints( 0.5f ) );
@@ -185,20 +185,21 @@ public class DeclarationForm extends JFrame
 //        executions = executionDAO.listExecutionByPerson( person );
         if( executions != null )
         {
-            Object[][] tableValue = new Object[executions.size()][5];
+            Object[][] tableValue = new Object[executions.size()][6];
 
             for( Integer i = 0; i < executions.size(); i++ )
             {
                 tableValue[i][0] = executions.get( i ).getDescription();
-                tableValue[i][1] = executions.get( i ).getInstitution();
+                tableValue[i][1] = executions.get( i ).getCampus();
+                tableValue[i][1] = executions.get( i ).getEdict();
                 tableValue[i][2] = executions.get( i ).getHoursworked();
-                tableValue[i][3] = executions.get( i ).getYear();
+                tableValue[i][2] = executions.get( i ).getStatus();
                 tableValue[i][4] = executions.get( i ).getPerson().getName();
             }
 
-            model = new DefaultTableModel( tableValue, new String [] { "Atividade", "Instituição", "Horas Trabalhadas", "Ano", "Pessoa" } ) {
-                Class[] types = new Class [] { java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class };
-                boolean[] canEdit = new boolean [] { true, true, true, true, false };
+            model = new DefaultTableModel( tableValue, new String [] { "Atividade", "Campus", "Edital", "Horas Trabalhadas", "Status", "Pessoa" } ) {
+                Class[] types = new Class [] { java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.String.class };
+                boolean[] canEdit = new boolean [] { true, true, true, true, true, false };
 
                 public Class getColumnClass(int columnIndex) { return types [columnIndex]; }
                 public boolean isCellEditable(int rowIndex, int columnIndex) { return canEdit [columnIndex]; }
@@ -243,14 +244,14 @@ public class DeclarationForm extends JFrame
 
             },
             new String [] {
-                "Atividade", "Instituição", "Horas Trabalhadas", "Ano", "Pessoa"
+                "Atividade", "Campus", "Edital", "Horas Trabalhadas", "Status", "Pessoa"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Boolean.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                true, true, true, true, false
+                true, true, true, true, true, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -346,9 +347,10 @@ public class DeclarationForm extends JFrame
             for( Integer i = 0; i < model.getRowCount(); i++ )
             {
                 executions.get( i ).setDescription( (String) model.getValueAt( i , 0 ) );
-                executions.get( i ).setInstitution( (String) model.getValueAt( i , 1 ) );
-                executions.get( i ).setHoursworked( Float.parseFloat( model.getValueAt(i , 2 ).toString() ) );
-                executions.get( i ).setYear( Integer.parseInt( model.getValueAt( i , 3 ).toString() ) );
+                executions.get( i ).setCampus( (String) model.getValueAt( i , 1 ) );
+                executions.get( i ).setEdict( (String) model.getValueAt( i , 2 ) );
+                executions.get( i ).setHoursworked( Float.parseFloat( model.getValueAt(i , 3 ).toString() ) );
+                executions.get( i ).setStatus( Boolean.parseBoolean( model.getValueAt( i , 3 ).toString() ) );
                 
                 executionDAO.update( executions.get( i ) );
             }

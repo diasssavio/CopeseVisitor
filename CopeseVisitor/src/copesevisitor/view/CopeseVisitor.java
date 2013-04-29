@@ -4,21 +4,28 @@ import copesevisitor.model.Category;
 import copesevisitor.model.Place;
 import copesevisitor.model.Person;
 import copesevisitor.model.Activity;
+import copesevisitor.model.Activityexecution;
 import copesevisitor.model.Event;
 import copesevisitor.persistence.DBManager;
 import copesevisitor.persistence.CategoryDAO;
 import copesevisitor.persistence.PlaceDAO;
 import copesevisitor.persistence.PersonDAO;
 import copesevisitor.persistence.ActivityDAO;
+import copesevisitor.persistence.ActivityexecutionDAO;
 import copesevisitor.persistence.EventDAO;
 
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileSystemView;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Date;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.BufferedReader;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
@@ -433,6 +440,7 @@ public class CopeseVisitor extends javax.swing.JFrame
         jTable4 = new javax.swing.JTable();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
+        jMenuImport = new javax.swing.JMenuItem();
         jMenuExit = new javax.swing.JMenuItem();
         jMenuRegister = new javax.swing.JMenu();
         jMenuPerson = new javax.swing.JMenuItem();
@@ -742,6 +750,14 @@ public class CopeseVisitor extends javax.swing.JFrame
 
         jMenuFile.setText("Arquivo");
 
+        jMenuImport.setText("Importar");
+        jMenuImport.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuImportActionPerformed(evt);
+            }
+        });
+        jMenuFile.add(jMenuImport);
+
         jMenuExit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F4, java.awt.event.InputEvent.ALT_MASK));
         jMenuExit.setText("Sair");
         jMenuExit.addActionListener(new java.awt.event.ActionListener() {
@@ -1016,6 +1032,45 @@ public class CopeseVisitor extends javax.swing.JFrame
         catch( ParseException e ) { e.printStackTrace(); }
     }//GEN-LAST:event_jButtonDeclarationActionPerformed
 
+    private void jMenuImportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuImportActionPerformed
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+        File toImport = null;
+        if( fileChooser.showOpenDialog(null) == 1 )
+            JOptionPane.showMessageDialog( null, "Arquivo inválido" );
+        else
+            toImport = fileChooser.getSelectedFile();
+        
+        if( toImport != null )
+        {
+            try
+            {
+                BufferedReader reader = new BufferedReader( new FileReader( toImport ) );
+                ActivityexecutionDAO executionDAO = new ActivityexecutionDAO( DBManager.getInstance().getConnection() );
+                
+                while( reader.ready() )
+                {
+                    Activityexecution execution = new Activityexecution();
+                    String[] fields = reader.readLine().split( "\\;" );
+                    
+                    execution.setPerson( personDAO.findBySiape( fields[0] ) );
+                    execution.setDescription( fields[2] );
+                    execution.setCampus( fields[3] );
+                    execution.setEdict( fields[4] );
+                    execution.setHoursworked( Float.parseFloat( fields[5] ) );
+                    execution.setStatus( false );
+                    
+                    if( execution.getPerson() == null )
+                        new PersonForm( null ).setVisible( true );
+                    else
+                        executionDAO.insert( execution );
+                }
+            }
+            catch(Exception e){ e.printStackTrace(); }
+        }
+        
+    }//GEN-LAST:event_jMenuImportActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -1075,6 +1130,7 @@ public class CopeseVisitor extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuExit;
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenu jMenuHelp;
+    private javax.swing.JMenuItem jMenuImport;
     private javax.swing.JMenuItem jMenuPerson;
     private javax.swing.JMenuItem jMenuPlace;
     private javax.swing.JMenu jMenuRegister;

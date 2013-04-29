@@ -5,7 +5,6 @@
 package copesevisitor.model;
 
 import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,8 +15,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -30,9 +27,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 @NamedQueries({
     @NamedQuery(name = "Activityexecution.findAll", query = "SELECT a FROM Activityexecution a"),
     @NamedQuery(name = "Activityexecution.findById", query = "SELECT a FROM Activityexecution a WHERE a.id = :id"),
-    @NamedQuery(name = "Activityexecution.findByInstitution", query = "SELECT a FROM Activityexecution a WHERE a.institution = :institution"),
     @NamedQuery(name = "Activityexecution.findByHoursworked", query = "SELECT a FROM Activityexecution a WHERE a.hoursworked = :hoursworked"),
-    @NamedQuery(name = "Activityexecution.findByYear", query = "SELECT a FROM Activityexecution a WHERE a.year = :year")})
+    @NamedQuery(name = "Activityexecution.findByStatus", query = "SELECT a FROM Activityexecution a WHERE a.status = :status")})
 public class Activityexecution implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -44,15 +40,19 @@ public class Activityexecution implements Serializable {
     @Column(name = "description")
     private String description;
     @Basic(optional = false)
-    @Column(name = "institution")
-    private String institution;
+    @Lob
+    @Column(name = "campus")
+    private String campus;
+    @Basic(optional = false)
+    @Lob
+    @Column(name = "edict")
+    private String edict;
     @Basic(optional = false)
     @Column(name = "hoursworked")
     private float hoursworked;
     @Basic(optional = false)
-    @Column(name = "year")
-    @Temporal(TemporalType.DATE)
-    private Integer year;
+    @Column(name = "status")
+    private boolean status;
     @JoinColumn(name = "person_id", referencedColumnName = "id")
     @ManyToOne(optional = false)
     private Person person;
@@ -64,12 +64,13 @@ public class Activityexecution implements Serializable {
         this.id = id;
     }
 
-    public Activityexecution(Integer id, String description, String institution, float hoursworked, Integer year) {
+    public Activityexecution(Integer id, String description, String campus, String edict, float hoursworked, boolean status) {
         this.id = id;
         this.description = description;
-        this.institution = institution;
+        this.campus = campus;
+        this.edict = edict;
         this.hoursworked = hoursworked;
-        this.year = year;
+        this.status = status;
     }
 
     public Integer getId() {
@@ -88,12 +89,20 @@ public class Activityexecution implements Serializable {
         this.description = description;
     }
 
-    public String getInstitution() {
-        return institution;
+    public String getCampus() {
+        return campus;
     }
 
-    public void setInstitution(String institution) {
-        this.institution = institution;
+    public void setCampus(String campus) {
+        this.campus = campus;
+    }
+
+    public String getEdict() {
+        return edict;
+    }
+
+    public void setEdict(String edict) {
+        this.edict = edict;
     }
 
     public float getHoursworked() {
@@ -104,12 +113,12 @@ public class Activityexecution implements Serializable {
         this.hoursworked = hoursworked;
     }
 
-    public Integer getYear() {
-        return year;
+    public boolean getStatus() {
+        return status;
     }
 
-    public void setYear(Integer year) {
-        this.year = year;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     public Person getPerson() {

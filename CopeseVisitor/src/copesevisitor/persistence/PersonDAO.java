@@ -311,4 +311,45 @@ public class PersonDAO {
         statement.close();
         return people;
     }
+    
+    /**
+     * 
+     * @param name
+     * @return
+     * @throws SQLException 
+     */
+    public Person findBySiape( String siape ) throws SQLException
+    {
+        PreparedStatement statement = connection.prepareStatement( "SELECT * FROM person WHERE siape IS NOT NULL AND siape=?" );
+        
+        statement.setObject( 1, siape );
+        
+        Person person = null;
+        ResultSet result = statement.executeQuery();
+        if( result.next() )
+        {
+            person = new Person( result.getInt( "id" ) );
+            person.setCpf( result.getString( "cpf" ) );
+            person.setName( result.getString( "name" ) );
+            person.setBirthdate( (Date) result.getObject( "birthdate" ) );
+            person.setRg( result.getString( "rg" ) );
+            person.setWichorgan( result.getString( "wichorgan" ) );
+            person.setEmail( result.getString( "email" ) );
+            person.setGender( result.getString( "gender" ) );
+            person.setPispasep( result.getString( "pispasep" ) );
+            person.setSiape( result.getString( "siape" ) );
+            person.setPhone1( result.getString( "phone1" ) );
+            person.setPhone2( result.getString( "phone2" ) );
+            person.setPhone3( result.getString( "phone3" ) );
+            person.setUftlink( result.getString( "uftlink" ) );
+            person.setStocking( result.getString( "stocking" ) );
+            person.setPlace( new PlaceDAO( connection ).selectPK( result.getInt( "place_id" ) ) );
+            person.setBankaccount( new BankaccountDAO( connection ).selectPK( result.getInt( "bankaccount_id" ) ) );
+            person.setAddress( new AddressDAO( connection ).selectPK( result.getInt( "address_id" ) ) );
+        }
+        
+        statement.close();
+        return person;
+    }
+    
 }

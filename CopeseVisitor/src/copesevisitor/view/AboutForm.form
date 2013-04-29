@@ -61,7 +61,7 @@
                       <Component id="jLabel1" alignment="2" min="-2" pref="92" max="-2" attributes="0"/>
                       <Component id="jButton1" alignment="2" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="87" max="32767" attributes="0"/>
+                  <EmptySpace pref="74" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -99,7 +99,7 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="cc" red="0" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="CopeseVisitor 0.1"/>
+            <Property name="text" type="java.lang.String" value="CopeseVisitor 0.1 beta 1"/>
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel3">
